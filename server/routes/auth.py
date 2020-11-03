@@ -66,7 +66,7 @@ def login():
     if not password:
         return {'status': 'error', 'msg': 'Password not provided'}, 400
 
-    user = User.query.filter_by(email=email).first()
+    user = User.query.filter_by(email=email.lower()).first()
 
     if user is None:
         return {'status': 'error', 'msg': 'No user with this email, please check details and try again'}, 401
@@ -112,7 +112,7 @@ def create():
     try:
         user = User(
             name=name,
-            email=email,
+            email=email.lower(),
             phone=phone,
             username=email.split('@')[0],
             role=role

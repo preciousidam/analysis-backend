@@ -14,14 +14,12 @@ def create_db():
 
 
 @propertyRoute.route('/', methods=['GET'])
-@jwt_required
 def get_properties():
     properties = Property.query.all()
     return jsonify({'data': properties, 'msg': 'success'}), 200
 
 
 @propertyRoute.route('/<path:path>', methods=['GET'])
-@jwt_required
 def get_property(path):
     property = Property.query.filter_by(id=path).first()
     return jsonify({'data': property, 'msg': 'success'}), 200
