@@ -60,6 +60,13 @@ def getroles():
     return jsonify(roles)
 
 
+@authRoute.route('/drop')
+def deleteDb():
+    db.drop_all()
+    db.session.commit()
+    return "database droped"
+
+
 
 @authRoute.route('/login', methods=['POST'])
 def login():
