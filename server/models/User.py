@@ -9,7 +9,7 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     name = db.Column(db.String(120), nullable=False)
     phone = db.Column(db.String(14), nullable=True)
-    role = db.Column(db.Integer, db.ForeignKey('roles.id'), nullable=False)
+    role = db.Column(db.String(15), db.ForeignKey('roles.title'), nullable=False)
     password = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), default=dt.now())
     updated_at = db.Column(db.DateTime(timezone=True), default=dt.now(), onupdate=dt.now())

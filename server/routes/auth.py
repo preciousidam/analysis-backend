@@ -19,7 +19,7 @@ def create_db():
 
 @jwt.user_claims_loader
 def add_details_to_token(identity):
-    role = Role.query.filter_by(id=identity.get('role')).first()
+    role = Role.query.filter_by(title=identity.get('role')).first()
     return role.json()
 
 @authRoute.route('/adduser')
