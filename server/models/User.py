@@ -53,6 +53,7 @@ class Role(db.Model):
     
     def json(self):
         return {
+            'id': self.id,
             'role': self.title,
             'permissions': self.permissions,
         }
