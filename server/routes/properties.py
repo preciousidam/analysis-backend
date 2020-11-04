@@ -216,3 +216,5 @@ def get_edit_property():
     db.session.refresh(property)
 
     return jsonify({'msg': 'Property saved', 'status': 'success', 'data': property}), 201
+
+

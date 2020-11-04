@@ -123,8 +123,8 @@ def create():
         db.session.add(user)
         db.session.commit()
         db.session.refresh(user)
-    except:
-        return jsonify({'status': 'error', 'msg': 'Something happend cannot add user to database'}), 500
+    except Exception as e:
+        return jsonify({'status': 'error', 'msg': str(e)}), 500
     #expires = timedelta(days=7)
     #access_token = create_access_token(identity=user.json(), expires_delta=expires)
     #refresh_token = create_refresh_token(identity=user.json())
