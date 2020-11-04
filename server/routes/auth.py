@@ -57,7 +57,7 @@ def addrole():
 @authRoute.route('/getroles')
 def getroles():
     roles = Role.query.all()
-    return roles
+    return jsonify(roles)
 
 
 
