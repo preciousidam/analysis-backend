@@ -55,7 +55,7 @@ def addrole():
 
 
 @authRoute.route('/getroles')
-def addrole():
+def getroles():
     roles = Role.query.all()
     return roles
 
