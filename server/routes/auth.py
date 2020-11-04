@@ -123,12 +123,15 @@ def create():
         return {'status': 'error', 'msg': 'Email address already exist! try login'}, 401
 
     try:
+
+        role = Role.query.filter_by(title=role).first()
+
         user = User(
             name=name,
             email=email.lower(),
             phone=phone,
             username=email.split('@')[0],
-            role=role
+            role=role.id
         )
 
         user.hashPassword(password)
