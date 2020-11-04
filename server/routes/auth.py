@@ -54,6 +54,12 @@ def addrole():
     return 'roles added'
 
 
+@authRoute.route('/getroles')
+def addrole():
+    roles = Role.query.all()
+    return roles
+
+
 
 @authRoute.route('/login', methods=['POST'])
 def login():
