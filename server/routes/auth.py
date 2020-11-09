@@ -22,50 +22,6 @@ def add_details_to_token(identity):
     role = Role.query.filter_by(id=identity.get('role')).first()
     return role.json()
 
-@authRoute.route('/adduser')
-def adduser():
-    user = User(
-        name='ebube',
-        email='ebube@cortts.com',
-        phone="08162300796",
-        username="ebube",
-        role=1
-    )
-
-    user.hashPassword('lilian01')
-    db.session.add(user)
-    db.session.commit()
-    return 'user added'
-
-@authRoute.route('/addrole')
-def addrole():
-    roleAdmin = Role(
-        title="admin",
-        permissions='read,write'
-    )
-
-    roleUser = Role(
-        title="user",
-    )
-    
-    db.session.add(roleAdmin)
-    db.session.add(roleUser)
-    db.session.commit()
-    return 'roles added'
-
-
-@authRoute.route('/getroles')
-def getroles():
-    roles = Role.query.all()
-    return jsonify(roles)
-
-
-@authRoute.route('/drop')
-def deleteDb():
-    db.drop_all()
-    db.session.commit()
-    return "database droped"
-
 
 
 @authRoute.route('/login', methods=['POST'])

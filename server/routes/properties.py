@@ -19,9 +19,14 @@ def get_properties():
     return jsonify({'data': properties, 'msg': 'success'}), 200
 
 
-@propertyRoute.route('/<path:path>', methods=['GET'])
-def get_property(path):
-    property = Property.query.filter_by(id=path).first()
+@propertyRoute.route('/<path:area>', methods=['GET'])
+def get_property_in_area(area):
+    properties = Property.query.filter_by(area=area.lower()).all()
+    return jsonify({'data': properties, 'msg': 'success'}), 200
+
+@propertyRoute.route('/<path:area>/<path:propName>', methods=['GET'])
+def get_property_by_id(area, propName):
+    property = Property.query.filter_by(area=area,name=propName.replace('-',' ')).first()
     return jsonify({'data': property, 'msg': 'success'}), 200
 
 @propertyRoute.route('/delete', methods=['POST'])
