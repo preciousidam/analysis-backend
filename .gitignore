@@ -5,8 +5,10 @@ __pycache__/
 
 # C extensions
 *.so
-
+.env
 dont-push.txt
+
+activate.bat
 
 # Distribution / packaging
 .Python

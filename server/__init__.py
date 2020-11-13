@@ -9,6 +9,7 @@ from server.routes.properties import propertyRoute
 
 ##############UTILITIES############
 from server.util.instances import initializeDB, initializeJWT
+from server.admin import initializeAdmin
 from server.util.jsonEncoder import JSONEncoder
     
 
@@ -42,6 +43,9 @@ def create_app(env):
 
     #initialize JWT 
     initializeJWT(app)
+
+    #initialize Admin 
+    initializeAdmin(app)
    
     '''change jsonify default JSON encoder to a custom Encode
     ### to support Model encoding for {user, account, transaction, etc}
