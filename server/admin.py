@@ -11,4 +11,4 @@ def initializeAdmin(app):
     admin.add_view(ModelView(User, db.session))
     admin.add_view(ModelView(Role, db.session))
     admin.add_view(PropertyAdmin(Property, db.session))
-    admin.add_view(ModelView(Price, db.session))
+    #admin.add_view(ModelView(Price, db.session))

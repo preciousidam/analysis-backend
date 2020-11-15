@@ -17,7 +17,7 @@ class Property(db.Model):
     serv_charge = db.Column(db.String(15))
     sale_price = db.Column(db.String(15))
     floors = db.Column(db.Integer)
-    facilities = db.Column(db.String(1024))
+    facilities = db.Column(db.Text(1024))
     land_size = db.Column(db.String(255))
     created_at = db.Column(db.DateTime(timezone=True), default=dt.now())
     updated_at = db.Column(db.DateTime(timezone=True), default=dt.now(), onupdate=dt.now())
@@ -70,8 +70,23 @@ class Price(db.Model):
             'amount': self.amount,
         }
 
+
+
+    
+
+
 class PropertyAdmin(ModelView):
     form_choices = {'area': [('ikoyi', 'Ikoyi'), ('vi', 'Victoria Island'), ('lekki', 'Lekki'), ('oniru', 'Oniru')],
                     'state': [('lagos', 'Lagos')],
                     'bedrooms': [(1,'1 Bedroom'), (2, '2 Bedroom'), (3, '3 Bedroom'), (4, '4 Bedroom')]
                     }
+    
+    column_auto_select_related = True
+    inline_models = (Price,)
+    column_labels = {'built': 'Year built', 'serv_charge': 'Service charge'}
+    form_widget_args = {
+        'facilities': {
+            'rows': 6
+        }
+    }
+
