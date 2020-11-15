@@ -3,6 +3,7 @@ from datetime import datetime as dt
 from werkzeug.security import generate_password_hash, check_password_hash
 from enum import Enum
 
+
 class User(db.Model):
     __tablename__ = 'Users'
     id = db.Column(db.Integer, primary_key=True)
@@ -61,3 +62,5 @@ class Role(db.Model):
             'role': self.title,
             'permissions': self.permissions,
         }
+
+

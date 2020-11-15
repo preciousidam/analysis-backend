@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required
 from operator import add
 import numpy
+from sqlalchemy import func
 
 from server.models.Properties import Property, Price
 from server.util.instances import db
@@ -38,3 +39,14 @@ def avarage_rent(bed):
     print(stats) 
     
     return jsonify({'data': stats, 'msg': 'success'}), 200
+
+
+@statRoute.route('/compare')
+def compare():
+    bed = request.args.get('bed')
+    comarea = request.args.get('comarea')
+    prop = Property.query.filter_by(area=comarea, bedrooms=bed).order_by(func.random()).first()
+    
+    return jsonify({'data': prop, 'msg': 'success'}), 200
+
+    

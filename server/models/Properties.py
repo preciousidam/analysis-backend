@@ -1,5 +1,6 @@
 from server.util.instances import db
 from datetime import datetime as dt
+from flask_admin.contrib.sqla import ModelView
 
 
 class Property(db.Model):
@@ -68,3 +69,9 @@ class Price(db.Model):
             'year': self.year,
             'amount': self.amount,
         }
+
+class PropertyAdmin(ModelView):
+    form_choices = {'area': [('ikoyi', 'Ikoyi'), ('vi', 'Victoria Island'), ('lekki', 'Lekki'), ('oniru', 'Oniru')],
+                    'state': [('lagos', 'Lagos')],
+                    'bedrooms': [(1,'1 Bedroom'), (2, '2 Bedroom'), (3, '3 Bedroom'), (4, '4 Bedroom')]
+                    }
