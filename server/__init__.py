@@ -6,6 +6,7 @@ from flask_cors import CORS
 ###########ROUTES##################
 from server.routes.auth import authRoute
 from server.routes.properties import propertyRoute
+from server.routes.statistics import statRoute
 
 ##############UTILITIES############
 from server.util.instances import initializeDB, initializeJWT
@@ -56,6 +57,7 @@ def create_app(env):
     #Register Blueprints
     app.register_blueprint(authRoute)
     app.register_blueprint(propertyRoute)
+    app.register_blueprint(statRoute)
 
 
 

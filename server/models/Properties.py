@@ -52,7 +52,7 @@ class Price(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     property_id = db.Column(db.Integer, db.ForeignKey('properties.id', ondelete='CASCADE'), nullable=False)
     year = db.Column(db.Integer, nullable=False)
-    amount = db.Column(db.String(255), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), default=dt.now())
     updated_at = db.Column(db.DateTime(timezone=True), default=dt.now(), onupdate=dt.now())
 

@@ -22,11 +22,6 @@ def add_details_to_token(identity):
     role = Role.query.filter_by(id=identity.get('role')).first()
     return role.json()
 
-@authRoute.route('/users/', methods=['GET'])
-def get_users():
-    users = User.query.all()
-    return jsonify({'data': users, 'msg': 'success'}), 200
-
 
 @authRoute.route('/roles/<int:id>', methods=['GET'])
 def get_roles(id):
@@ -58,59 +53,6 @@ def login():
     refresh_token = create_refresh_token(identity=user.json())
     return jsonify({'status': 'success', 'msg': 'Login Successful', 'token':access_token, 'refreshToken': refresh_token}), 200
 
-
-
-@authRoute.route('/create', methods=['POST'])
-def create():
-    email = request.json.get('email', None)
-    password = request.json.get('password', None)
-    phone = request.json.get('phone', None)
-    name = request.json.get('name', None)
-    role = request.json.get('role', None)
-
-    if not email:
-        return {'status': 'error', 'msg': 'Email not provided'}, 400
-    
-    if not password:
-        return {'status': 'error', 'msg': 'Password not provided'}, 400
-
-    if not name:
-        return {'status': 'error', 'msg': 'Name not provided'}, 400
-    
-    if not phone:
-        return {'status': 'error', 'msg': 'Phone number not provided'}, 400
-
-    if not role:
-        return {'status': 'error', 'msg': 'User role not provided'}, 400
-
-    user = User.query.filter_by(email=email).first()
-
-    if user is not None:
-        return {'status': 'error', 'msg': 'Email address already exist! try login'}, 401
-
-    try:
-
-        role = Role.query.filter_by(title=role).first()
-
-        user = User(
-            name=name,
-            email=email.lower(),
-            phone=phone,
-            username=email.split('@')[0],
-            role=role.id
-        )
-
-        user.hashPassword(password)
-
-        db.session.add(user)
-        db.session.commit()
-        db.session.refresh(user)
-    except Exception as e:
-        return jsonify({'status': 'error', 'msg': str(e)}), 500
-    #expires = timedelta(days=7)
-    #access_token = create_access_token(identity=user.json(), expires_delta=expires)
-    #refresh_token = create_refresh_token(identity=user.json())
-    return jsonify({'status': 'success', 'msg': 'User Created Successfully'}), 200
 
 
 @authRoute.route('/refresh', methods=['POST'])

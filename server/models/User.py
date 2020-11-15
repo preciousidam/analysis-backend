@@ -1,6 +1,7 @@
 from server.util.instances import db
 from datetime import datetime as dt
 from werkzeug.security import generate_password_hash, check_password_hash
+from enum import Enum
 
 class User(db.Model):
     __tablename__ = 'Users'
@@ -37,13 +38,16 @@ class User(db.Model):
     def checkPassword(self, password):
         return check_password_hash(self.password, password)
 
-
+class Permissions(Enum):
+    READ = 'read'
+    WRITE = 'write'
 
 class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(15), nullable=False)
-    permissions = db.Column(db.String(255), default='read', nullable=False)
+    permissions = db.Column(db.String(255), db.Enum(Permissions), default=Permissions.READ, nullable=False)
+    users = db.relationship('User', backref='roles', lazy=False)
     created_at = db.Column(db.DateTime(timezone=True), default=dt.now())
     updated_at = db.Column(db.DateTime(timezone=True), default=dt.now(), onupdate=dt.now())
 
