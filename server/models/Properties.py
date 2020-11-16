@@ -86,6 +86,7 @@ class PropertyAdmin(ModelView):
     column_labels = {'built': 'Year built', 'serv_charge': 'Service charge'}
     column_sortable_list = ('area', 'bedrooms', 'name', 'built',)
     column_searchable_list = ('name', 'area',)
+    column_exclude_list=('created_at', 'updated_at')
     column_default_sort = ('name',False)
     can_export = True
     column_editable_list = ('name', 'bedrooms', 'address', 'area')
