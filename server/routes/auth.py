@@ -4,6 +4,7 @@ from flask_jwt_extended import (create_access_token,
     create_refresh_token, get_jwt_identity
 )
 from datetime import timedelta
+from flask_cors import CORS
 
 from server.util.instances import jwt
 from server.models.User import User, Role
@@ -11,6 +12,8 @@ from server.util.instances import db
 
 
 authRoute = Blueprint('auth', __name__, url_prefix='/api/auth')
+
+CORS(authRoute)
 
 @authRoute.before_request
 def create_db():

@@ -3,11 +3,15 @@ from flask_jwt_extended import jwt_required
 from operator import add
 import numpy
 from sqlalchemy import func
+from flask_cors import CORS
 
 from server.models.Properties import Property, Price
 from server.util.instances import db
 
 statRoute = Blueprint('statistics', __name__, url_prefix="/api/stats")
+
+
+CORS(statRoute)
 
 def prices (a):
     return a.amount

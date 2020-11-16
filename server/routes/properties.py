@@ -1,11 +1,14 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required
+from flask_cors import CORS
 
 from server.models.Properties import Property, Price
 from server.util.instances import db
 
 
 propertyRoute = Blueprint('properties', __name__, url_prefix='/api/properties')
+
+CORS(propertyRoute)
 
 @propertyRoute.before_request
 def create_db():
