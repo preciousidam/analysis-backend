@@ -7,7 +7,7 @@ from datetime import timedelta
 from flask_cors import CORS
 
 from server.util.instances import jwt
-from server.models.User import User, Role
+from server.models.User import User, Role, UserRole
 from server.util.instances import db
 
 
@@ -22,7 +22,8 @@ def create_db():
 
 @jwt.user_claims_loader
 def add_details_to_token(identity):
-    role = Role.query.filter_by(id=identity.get('role')).first()
+    userRole = UserRole.query.filter_by(user_id=identity.get('id')).first()
+    role = Role.query.filter_by(id=userRole.role_id).first()
     return role.json()
 
 
