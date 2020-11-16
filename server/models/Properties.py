@@ -82,7 +82,7 @@ class PropertyAdmin(ModelView):
                     }
     
     column_auto_select_related = True
-    inline_models = [(Price,dict(form_columns=['year', 'amount']))]
+    inline_models = [(Price,dict(form_columns=['id', 'year', 'amount']))]
     column_labels = {'built': 'Year built', 'serv_charge': 'Service charge'}
     column_sortable_list = ('area', 'bedrooms', 'name', 'built',)
     column_searchable_list = ('name', 'area',)
