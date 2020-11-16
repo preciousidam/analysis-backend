@@ -28,7 +28,6 @@ class User(db.Model):
             'name': self.name,
             'email': self.email,
             'phone': self.phone,
-            'role': self.role,
             'created_at': self.created_at,
             'updated_at': self.updated_at,
         }
