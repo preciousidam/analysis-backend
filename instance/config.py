@@ -32,6 +32,7 @@ class Config:
     MAIL_SUPPRESS_SEND= False
     MAIL_USE_TLS=False
     MAIL_USE_SSL=True
+    FLASK_ADMIN_SWATCH=os.getenv('FLASK_ADMIN_SWATCH')
 
 class TestConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///'+os.path.join(Path('../'), 'test.db')
