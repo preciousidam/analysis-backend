@@ -2,16 +2,16 @@ from server.util.instances import db
 from datetime import datetime as dt
 from werkzeug.security import generate_password_hash, check_password_hash
 from enum import Enum
+from flask_admin.contrib.sqla import ModelView
 
 
 class User(db.Model):
-    __tablename__ = 'Users'
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     name = db.Column(db.String(120), nullable=False)
     phone = db.Column(db.String(14), nullable=True)
-    role = db.Column(db.Integer, db.ForeignKey('roles.id'), nullable=False)
     password = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), default=dt.now())
     updated_at = db.Column(db.DateTime(timezone=True), default=dt.now(), onupdate=dt.now())
@@ -48,7 +48,6 @@ class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(15), nullable=False)
     permissions = db.Column(db.String(255), db.Enum(Permissions), default=Permissions.READ, nullable=False)
-    users = db.relationship('User', backref='roles', lazy=False)
     created_at = db.Column(db.DateTime(timezone=True), default=dt.now())
     updated_at = db.Column(db.DateTime(timezone=True), default=dt.now(), onupdate=dt.now())
 
@@ -63,4 +62,23 @@ class Role(db.Model):
             'permissions': self.permissions,
         }
 
+class UserRole(db.Model):
+    __tablename__ = 'user_roles'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE'))
+    role_id = db.Column(db.Integer(), db.ForeignKey('roles.id', ondelete='CASCADE'))
+    user = db.relationship('User', backref="user_roles", lazy=False)
+    roles = db.relationship('Role', backref="user_roles", lazy=True)
 
+class UserAdminView(ModelView):
+    
+    column_auto_select_related = True
+    column_hide_backrefs = False
+    column_exclude_list=('password')
+    inline_models = (UserRole,)
+    column_labels = {'phone': 'Phone Number',}
+    column_sortable_list = ('name', 'email', 'username',)
+    column_searchable_list = ('name', 'email','username',)
+    column_default_sort = [('name',False), ('email',False)]
+    column_editable_list = ('name', 'username', 'email',)
+    

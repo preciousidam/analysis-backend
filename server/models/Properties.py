@@ -82,8 +82,13 @@ class PropertyAdmin(ModelView):
                     }
     
     column_auto_select_related = True
-    inline_models = (Price,)
+    inline_models = [(Price,dict(form_columns=['year', 'amount']))]
     column_labels = {'built': 'Year built', 'serv_charge': 'Service charge'}
+    column_sortable_list = ('area', 'bedrooms', 'name', 'built',)
+    column_searchable_list = ('name', 'area',)
+    column_default_sort = ('name',False)
+    can_export = True
+    column_editable_list = ('name', 'bedrooms', 'address', 'area')
     form_widget_args = {
         'facilities': {
             'rows': 6
