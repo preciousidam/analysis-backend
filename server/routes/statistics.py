@@ -38,9 +38,7 @@ def avarage_rent(bed):
     if countIkoyi > 0:
         stats['ikoyi'] = list(numpy.array(stats['ikoyi'])/countIkoyi)
     if countOniru > 0:
-        stats['oniru'] = list(numpy.array(stats['oniru'])/countOniru) 
-
-    print(stats) 
+        stats['oniru'] = list(numpy.array(stats['oniru'])/countOniru)  
     
     return jsonify({'data': stats, 'msg': 'success'}), 200
 

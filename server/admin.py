@@ -4,7 +4,7 @@ from server.models.User import Role, User, UserAdminView
 from server.models.Properties import Property, Price, PropertyAdmin
 from server.util.instances import db
 
-admin = Admin()
+admin = Admin(template_mode='bootstrap3')
 
 def initializeAdmin(app):
     admin.init_app(app)
