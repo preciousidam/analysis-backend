@@ -12,7 +12,7 @@ CORS(propertyRoute)
 
 @propertyRoute.before_request
 def create_db():
-    db.create_all()
+    db drop_all()
     db.session.commit()
 
 
