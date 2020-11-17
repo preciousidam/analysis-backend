@@ -6,12 +6,13 @@ from flask_admin.contrib.sqla import ModelView
 class Property(db.Model):
     __tablename__ = 'properties'
     id = db.Column(db.Integer, primary_key=True, nullable=False)
-    name = db.Column(db.String(255), nullable=False, unique=True)
+    name = db.Column(db.String(255), nullable=False)
+    type = db.Column(db.String(255), nullable=False)
     address = db.Column(db.String(255), nullable=False)
     area = db.Column(db.String(255), nullable=False)
     state = db.Column(db.String(255), nullable=False)
     bedrooms = db.Column(db.Integer, nullable=False)
-    built = db.Column(db.Integer, nullable=False)
+    built = db.Column(db.Integer, nullable=True)
     units = db.Column(db.Integer, nullable=False)
     rents = db.relationship('Price', cascade='all, delete, delete-orphan', backref='properties', lazy=False, passive_deletes=True)
     serv_charge = db.Column(db.String(15))
@@ -31,6 +32,7 @@ class Property(db.Model):
             'id': self.id,
             'name': self.name,
             'address': self.address,
+            'type': self.type,
             'area': self.area,
             'state': self.state,
             'bedrooms': self.bedrooms,
@@ -78,7 +80,8 @@ class Price(db.Model):
 class PropertyAdmin(ModelView):
     form_choices = {'area': [('ikoyi', 'Ikoyi'), ('vi', 'Victoria Island'), ('lekki', 'Lekki'), ('oniru', 'Oniru')],
                     'state': [('lagos', 'Lagos')],
-                    'bedrooms': [(1,'1 Bedroom'), (2, '2 Bedroom'), (3, '3 Bedroom'), (4, '4 Bedroom')]
+                    'bedrooms': [(1,'1 Bedroom'), (2, '2 Bedroom'), (3, '3 Bedroom'), (4, '4 Bedroom')],
+                    'type': [('Flat','Flat'), ('pent house', 'Pent House'), ('terrace', 'Terrace'), ("duplex", 'Duplex'), ("maisonette", 'Maisonette')]
                     }
     
     column_auto_select_related = True

@@ -46,8 +46,9 @@ def avarage_rent(bed):
 @statRoute.route('/compare')
 def compare():
     bed = request.args.get('bed')
+    typeOf = request.args.get('type')
     comarea = request.args.get('comarea')
-    prop = Property.query.filter_by(area=comarea, bedrooms=bed).order_by(func.random()).first()
+    prop = Property.query.filter_by(area=comarea, bedrooms=bed, type=typeOf).order_by(func.random()).first()
     
     return jsonify({'data': prop, 'msg': 'success'}), 200
 
