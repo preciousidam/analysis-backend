@@ -15,7 +15,7 @@ class Property(db.Model):
     built = db.Column(db.Integer, nullable=True)
     units = db.Column(db.Integer, nullable=False)
     rents = db.relationship('Price', cascade='all, delete, delete-orphan', 
-                            backref='properties', lazy=False, passive_deletes=True, order_by='Prices.year')
+                            backref='properties', lazy=False, passive_deletes=True, order_by='prices.year')
     serv_charge = db.Column(db.String(15))
     sale_price = db.Column(db.String(15))
     floors = db.Column(db.Integer)
