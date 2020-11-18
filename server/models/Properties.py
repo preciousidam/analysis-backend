@@ -16,7 +16,7 @@ class Property(db.Model):
     units = db.Column(db.Integer, nullable=False)
     rents = db.relationship('Price', cascade='all, delete, delete-orphan', 
                             backref='properties', lazy=False, passive_deletes=True, order_by='Price.year')
-    serv_charge = db.Column(db.String(15))
+    serv_charge = db.Column(db.Float)
     sale_price = db.Column(db.String(15))
     floors = db.Column(db.Integer)
     facilities = db.Column(db.Text(1024))
