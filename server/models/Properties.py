@@ -16,8 +16,8 @@ class Property(db.Model):
     units = db.Column(db.Integer, nullable=False)
     rents = db.relationship('Price', cascade='all, delete, delete-orphan', 
                             backref='properties', lazy=False, passive_deletes=True, order_by='Price.year')
-    serv_charge = db.Column(db.String(15))
-    sale_price = db.Column(db.String(15))
+    serv_charge = db.Column(db.Float)
+    sale_price = db.Column(db.Float)
     floors = db.Column(db.Integer)
     facilities = db.Column(db.Text(1024))
     land_size = db.Column(db.String(255))
@@ -93,7 +93,7 @@ class PropertyAdmin(ModelView):
     column_exclude_list=('created_at', 'updated_at')
     column_default_sort = ('name',False)
     can_export = True
-    column_editable_list = ('name', 'bedrooms', 'address', 'area', 'serv_charge')
+    column_editable_list = ('name', 'bedrooms', 'address', 'area', 'serv_charge', 'type', 'sale_price')
     form_widget_args = {
         'facilities': {
             'rows': 6
