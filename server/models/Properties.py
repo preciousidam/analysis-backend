@@ -93,7 +93,7 @@ class PropertyAdmin(ModelView):
     column_exclude_list=('created_at', 'updated_at')
     column_default_sort = ('name',False)
     can_export = True
-    column_editable_list = ('name', 'bedrooms', 'address', 'area')
+    column_editable_list = ('name', 'bedrooms', 'address', 'area', 'serv_charge')
     form_widget_args = {
         'facilities': {
             'rows': 6
