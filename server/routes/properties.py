@@ -24,7 +24,7 @@ def get_properties():
 
 @propertyRoute.route('/<path:area>', methods=['GET'])
 def get_property_in_area(area):
-    properties = Property.query.filter_by(area=area.lower()).all()
+    properties = Property.query.filter_by(area=area.lower()).order_by("updated_at").all()
     return jsonify({'data': properties, 'msg': 'success'}), 200
 
 @propertyRoute.route('/<path:area>/<path:propName>', methods=['GET'])
