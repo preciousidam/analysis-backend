@@ -26,6 +26,9 @@ def add_details_to_token(identity):
     role = Role.query.filter_by(id=userRole.role_id).first()
     return role.json()
 
+@authRoute.route('/')
+def create():
+    return ''
 
 @authRoute.route('/roles/<int:id>', methods=['GET'])
 def get_roles(id):

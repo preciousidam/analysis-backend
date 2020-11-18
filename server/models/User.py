@@ -13,6 +13,7 @@ class User(db.Model):
     name = db.Column(db.String(120), nullable=False)
     phone = db.Column(db.String(14), nullable=True)
     password = db.Column(db.String(255), nullable=False)
+    is_active = db.Column(db.Boolean())
     created_at = db.Column(db.DateTime(timezone=True), default=dt.now())
     updated_at = db.Column(db.DateTime(timezone=True), default=dt.now(), onupdate=dt.now())
 
@@ -68,16 +69,31 @@ class UserRole(db.Model):
     role_id = db.Column(db.Integer(), db.ForeignKey('roles.id', ondelete='CASCADE'))
     user = db.relationship('User', backref="user_roles", lazy=False)
     roles = db.relationship('Role', backref="user_roles", lazy=True)
+    def __repr__(self):
+        return '%r role' % self.user.name
+
+
+class RoleAdminView(ModelView):
+    form_choices = {'permissions': [(Permissions.READ, "Read"), (Permissions.WRITE, 'Write')]}
 
 class UserAdminView(ModelView):
     
+    form_args ={'is_active': dict(description='Check instead of deleting user to deactivate user')}
     column_auto_select_related = True
     column_hide_backrefs = False
     column_exclude_list=('password')
     inline_models = (UserRole,)
-    column_labels = {'phone': 'Phone Number',}
+    column_labels = {'phone': 'Phone Number', 'is_active': 'Active'}
     column_sortable_list = ('name', 'email', 'username',)
     column_searchable_list = ('name', 'email','username',)
     column_default_sort = [('name',False), ('email',False)]
     column_editable_list = ('name', 'username', 'email',)
+    can_delete = False
+    
+    def on_form_prefill(self, form, id):
+        form.password.render_kw = {'readonly': True}
+
+    def on_model_change(self, form, model, is_created):
+        if is_created:
+            model.password = generate_password_hash(model.password)
     
