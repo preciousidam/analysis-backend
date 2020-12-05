@@ -67,8 +67,6 @@ class Price(db.Model):
     
     def json(self):
         return {
-            'id': self.id,
-            'property_id': self.property_id,
             'year': self.year,
             'amount': self.amount,
         }

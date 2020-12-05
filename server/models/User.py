@@ -39,6 +39,26 @@ class User(db.Model):
     def checkPassword(self, password):
         return check_password_hash(self.password, password)
 
+    
+class ResetToken(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(255), unique=True, nullable=False)
+    token = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.DateTime(timezone=True), default=dt.now())
+    updated_at = db.Column(db.DateTime(timezone=True), default=dt.now(), onupdate=dt.now())
+
+    def __repr__(self):
+        return 'Reset token for %r' % self.email
+
+    
+    def json(self):
+        return {
+            'email': self.email,
+            'token': self.name,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at,
+        }
+
 class Permissions(Enum):
     READ = 'read'
     WRITE = 'write'

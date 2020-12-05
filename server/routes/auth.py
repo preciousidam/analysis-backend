@@ -38,6 +38,7 @@ def get_roles(id):
 
 @authRoute.route('/login', methods=['POST'])
 def login():
+    
     email = request.json.get('email', None)
     password = request.json.get('password', None)
 
@@ -58,7 +59,23 @@ def login():
     expires = timedelta(days=7)
     access_token = create_access_token(identity=user.json(), expires_delta=expires)
     refresh_token = create_refresh_token(identity=user.json())
-    return jsonify({'status': 'success', 'msg': 'Login Successful', 'token':access_token, 'refreshToken': refresh_token}), 200
+    return jsonify({'status': 'success', 'msg': 'Login Successful', 'token':access_token, 'refreshToken': refresh_token, 'user': user}), 200
+
+
+@authRoute.route('/request-password-reset', methods=['POST'])
+def passwordReset():
+    email = request.json.get('email', None)
+
+    if not email:
+        return {'status': 'error', 'msg': 'Email not provided'}, 400
+
+
+    user = User.query.filter_by(email=email.lower()).first()
+
+    if user is None:
+        return {'status': 'error', 'msg': 'No user with this email, please check details and try again'}, 401
+
+    return jsonify({'status': 'success', 'msg': 'A token has been sent to email'}), 200
 
 
 
