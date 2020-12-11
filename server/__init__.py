@@ -7,6 +7,7 @@ from flask_cors import CORS
 from server.routes.auth import authRoute
 from server.routes.properties import propertyRoute
 from server.routes.statistics import statRoute
+from server.routes.search import searchRoute
 
 ##############UTILITIES############
 from server.util.instances import initializeDB, initializeJWT
@@ -58,6 +59,7 @@ def create_app(env):
     app.register_blueprint(authRoute)
     app.register_blueprint(propertyRoute)
     app.register_blueprint(statRoute)
+    app.register_blueprint(searchRoute)
 
 
 
