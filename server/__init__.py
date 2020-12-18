@@ -8,9 +8,10 @@ from server.routes.auth import authRoute
 from server.routes.properties import propertyRoute
 from server.routes.statistics import statRoute
 from server.routes.search import searchRoute
+from server.routes.support import supportRoute
 
 ##############UTILITIES############
-from server.util.instances import initializeDB, initializeJWT
+from server.util.instances import initializeDB, initializeJWT, initializeMail
 from server.admin import initializeAdmin
 from server.util.jsonEncoder import JSONEncoder
     
@@ -43,14 +44,20 @@ def create_app(env):
     #initialize Database
     initializeDB(app)
 
+    #initialize Mail
+    initializeMail(app)
+
     #initialize JWT 
     initializeJWT(app)
 
     #initialize Admin 
     initializeAdmin(app)
+
+    #initialize Cloudinary
+    #initializeCloud(app)
    
     '''change jsonify default JSON encoder to a custom Encode
-    ### to support Model encoding for {user, account, transaction, etc}
+    ### to support Model encoding for {user, properties, etc}
     '''
     app.json_encoder = JSONEncoder
 
@@ -60,6 +67,7 @@ def create_app(env):
     app.register_blueprint(propertyRoute)
     app.register_blueprint(statRoute)
     app.register_blueprint(searchRoute)
+    app.register_blueprint(supportRoute)
 
 
 

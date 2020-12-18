@@ -24,12 +24,13 @@ def avarage_rent(bed):
 
     for prop in properties:
         price = list(map(prices,prop.rents))
+        price = numpy.pad(price, pad_width=(5-len(price),0))
         stats[prop.area] = list(map(add,stats[prop.area],price))
 
-    countLekki = properties = Property.query.filter_by(area='lekki').count()
-    countVi = properties = Property.query.filter_by(area='vi').count()
-    countIkoyi = properties = Property.query.filter_by(area='ikoyi').count()
-    countOniru = properties = Property.query.filter_by(area='oniru').count()
+    countLekki = Property.query.filter_by(area='lekki').count()
+    countVi = Property.query.filter_by(area='vi').count()
+    countIkoyi = Property.query.filter_by(area='ikoyi').count()
+    countOniru = Property.query.filter_by(area='oniru').count()
 
     if countLekki > 0:
         stats['lekki'] = list(numpy.array(stats['lekki'])/countLekki)
@@ -46,10 +47,32 @@ def avarage_rent(bed):
 @statRoute.route('/compare')
 def compare():
     bed = request.args.get('bed')
+    area = request.args.get('area')
     typeOf = request.args.get('type')
     comarea = request.args.get('comarea')
-    prop = Property.query.filter_by(area=comarea, bedrooms=bed, type=typeOf).order_by(func.random()).first()
+    props = Property.query.filter_by(area=area, bedrooms=bed, type=typeOf).all()
+    propCom = Property.query.filter_by(area=comarea, bedrooms=bed, type=typeOf).all()
+    stats = {area: [0,0,0,0,0], comarea: [0,0,0,0,0]}
     
-    return jsonify({'data': prop, 'msg': 'success'}), 200
+    for prop in props:
+        price = list(map(prices,prop.rents))
+        price = numpy.pad(price, pad_width=(5-len(price),0))
+        stats[area] = list(map(add, stats[area],price))
+    
+    for prop in propCom:
+        price = list(map(prices,prop.rents))
+        price = numpy.pad(price, pad_width=(5-len(price),0))
+        stats[comarea] = list(map(add,stats[comarea],price))
+
+    count1 = Property.query.filter_by(area=area).count()
+    count2 = Property.query.filter_by(area=comarea).count()
+
+
+    if count1 > 0:
+        stats[area] = list(numpy.array(stats[area])/count1)
+    if count2 > 0:
+        stats[comarea] = list(numpy.array(stats[comarea])/count2)
+    
+    return jsonify({'data': stats, 'msg': 'success'}), 200
 
     

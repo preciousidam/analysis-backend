@@ -51,20 +51,20 @@ def delete_property():
 @jwt_required
 def get_create_property():
 
-    if request.method == 'POST':
-        name = request.json.get('name', None)
-        address = request.json.get('address', None)
-        area = request.json.get('area', None)
-        state = request.json.get('state', None)
-        bedrooms = request.json.get('bedrooms', None)
-        built = request.json.get('built', None)
-        units = request.json.get('units', None)
-        rents = request.json.get('rents', None)
-        serv_charge = request.json.get('serv_charge', None)
-        sale_price = request.json.get('sale_price', None)
-        floors = request.json.get('floors', None)
-        facilities = request.json.get('facilties', None)
-        land_size = request.json.get('land_size', None)
+    
+    name = request.json.get('name', None)
+    address = request.json.get('address', None)
+    area = request.json.get('area', None)
+    state = request.json.get('state', None)
+    bedrooms = request.json.get('bedrooms', None)
+    built = request.json.get('built', None)
+    units = request.json.get('units', None)
+    rents = request.json.get('rents', None)
+    serv_charge = request.json.get('serv_charge', None)
+    sale_price = request.json.get('sale_price', None)
+    floors = request.json.get('floors', None)
+    facilities = request.json.get('facilties', None)
+    land_size = request.json.get('land_size', None)
 
     
     if not name:
@@ -135,21 +135,21 @@ def get_create_property():
 @jwt_required
 def get_edit_property():
 
-    if request.method == 'POST':
-        id = request.json.get('id', None)
-        name = request.json.get('name', None)
-        address = request.json.get('address', None)
-        area = request.json.get('area', None)
-        state = request.json.get('state', None)
-        bedrooms = request.json.get('bedrooms', None)
-        built = request.json.get('built', None)
-        units = request.json.get('units', None)
-        rents = request.json.get('rents', None)
-        serv_charge = request.json.get('serv_charge', None)
-        sale_price = request.json.get('sale_price', None)
-        floors = request.json.get('floors', None)
-        facilities = request.json.get('facilties', None)
-        land_size = request.json.get('land_size', None)
+    
+    id = request.json.get('id', None)
+    name = request.json.get('name', None)
+    address = request.json.get('address', None)
+    area = request.json.get('area', None)
+    state = request.json.get('state', None)
+    bedrooms = request.json.get('bedrooms', None)
+    built = request.json.get('built', None)
+    units = request.json.get('units', None)
+    rents = request.json.get('rents', None)
+    serv_charge = request.json.get('serv_charge', None)
+    sale_price = request.json.get('sale_price', None)
+    floors = request.json.get('floors', None)
+    facilities = request.json.get('facilties', None)
+    land_size = request.json.get('land_size', None)
 
     
     if not id:

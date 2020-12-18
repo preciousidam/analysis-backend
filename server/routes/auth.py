@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import (create_access_token, 
     get_jwt_claims, jwt_refresh_token_required, 
-    create_refresh_token, get_jwt_identity
+    create_refresh_token, get_jwt_identity, jwt_required
 )
 from datetime import timedelta
 from flask_cors import CORS
@@ -63,8 +63,12 @@ def login():
 
 
 @authRoute.route('/request-password-reset', methods=['POST'])
+@jwt_required
 def passwordReset():
+    
     email = request.json.get('email', None)
+    password = request.json.get('password', None)
+    password_new = request.json.get('password_new', None)
 
     if not email:
         return {'status': 'error', 'msg': 'Email not provided'}, 400
@@ -74,8 +78,14 @@ def passwordReset():
 
     if user is None:
         return {'status': 'error', 'msg': 'No user with this email, please check details and try again'}, 401
+    
+    if user.checkPassword(password) is False:
+        return {'status': 'error', 'msg': 'Invalid Current Password, please check details and try again'}, 401
+    
+    user.hashPassword(password_new)
+    db.session.commit()
 
-    return jsonify({'status': 'success', 'msg': 'A token has been sent to email'}), 200
+    return jsonify({'status': 'success', 'msg': 'Password change successful'}), 200
 
 
 

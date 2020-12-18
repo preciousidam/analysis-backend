@@ -17,22 +17,20 @@ class Config:
     SQLALCHEMY_DATABASE_URI=os.getenv('SQLALCHEMY_DATABASE_URI')
     SQLALCHEMY_TRACK_MODIFICATIONS=bool(os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS'))
     SQLALCHEMY_ENGINE_OPTIONS={'pool_recycle': int(os.getenv('SQLALCHEMY_POOL_RECYCLE', 2000))}
-    '''MONGODB_DB=os.getenv('MONGO_DB')
-    MONGODB_HOST=os.getenv('MONGODB_HOST')
-    MONGODB_PORT=int(os.getenv('MONGODB_PORT','27017'))
-    MONGODB_USERNAME=os.getenv('MONGODB_USERNAME')
-    MONGODB_PASSWORD=os.getenv('MONGODB_PASSWORD')'''
 
     MAIL_DEFAULT_SENDER=os.getenv('MAIL_DEFAULT_SENDER')
     MAIL_SERVER=os.getenv('MAIL_SERVER')
     MAIL_PORT=int(os.getenv('MAIL_PORT'))
-    MAIL_DEBUG= True
+    MAIL_DEBUG= False
     MAIL_USERNAME=os.getenv('MAIL_USERNAME')
     MAIL_PASSWORD=os.getenv('MAIL_PASSWORD')
     MAIL_SUPPRESS_SEND= False
     MAIL_USE_TLS=False
     MAIL_USE_SSL=True
     FLASK_ADMIN_SWATCH=os.getenv('FLASK_ADMIN_SWATCH')
+    CLOUD_NAME=os.getenv('CLOUD_NAME')
+    CLOUD_API_KEY=os.getenv('CLOUD_API_KEY')
+    CLOUD_API_SECRET=os.getenv('CLOUD_API_SECRET')
 
 class TestConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///'+os.path.join(Path('../'), 'test.db')

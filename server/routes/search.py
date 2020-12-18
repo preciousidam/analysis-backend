@@ -24,5 +24,3 @@ def compare():
     )).order_by(func.random()).all()
     
     return jsonify({'property': prop, 'msg': 'success'}), 200
-
-    
