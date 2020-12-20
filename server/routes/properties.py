@@ -24,8 +24,11 @@ def get_properties():
 
 @propertyRoute.route('/<path:area>', methods=['GET'])
 def get_property_in_area(area):
-    properties = Property.query.filter_by(area=area.lower()).order_by("updated_at").all()
-    return jsonify({'data': properties, 'msg': 'success'}), 200
+    page= int(request.args.get('page'), base=10)
+    per_page=10
+    propertyCount = Property.query.filter_by(area=area.lower()).count()
+    properties = Property.query.filter_by(area=area.lower()).order_by(Property.updated_at.desc()).paginate(page,per_page,error_out=False)
+    return jsonify({'data': {'properties': properties.items, 'total': propertyCount}, 'msg': 'success'}), 200
 
 @propertyRoute.route('/<path:area>/<path:propName>', methods=['GET'])
 def get_property_by_id(area, propName):
