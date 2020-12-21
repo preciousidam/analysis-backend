@@ -14,6 +14,7 @@ statRoute = Blueprint('statistics', __name__, url_prefix="/api/stats")
 CORS(statRoute)
 
 def prices (a):
+    print(a.year)
     return a.amount
 
 

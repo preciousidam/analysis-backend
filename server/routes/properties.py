@@ -19,7 +19,7 @@ def create_db():
 
 @propertyRoute.route('/', methods=['GET'])
 def get_properties():
-    properties = Property.query.all()
+    properties = Property.query.order_by(Property.updated_at.desc()).all()
     return jsonify({'data': properties, 'msg': 'success'}), 200
 
 
