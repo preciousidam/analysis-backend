@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required
+from sqlalchemy import func, or_
 from flask_cors import CORS
 
 from server.models.Properties import Property, Price
@@ -22,18 +23,37 @@ def get_properties():
     return jsonify({'data': properties, 'msg': 'success'}), 200
 
 
+
 @propertyRoute.route('/<path:area>', methods=['GET'])
 def get_property_in_area(area):
-    page= int(request.args.get('page'), base=10)
+    page= int(request.args.get('page', 1), base=10)
+
+    q = request.args.get('q').lower()
+    bed = request.args.get('bed').lower()
     per_page=10
-    propertyCount = Property.query.filter_by(area=area.lower()).count()
-    properties = Property.query.filter_by(area=area.lower()).order_by(Property.updated_at.desc()).paginate(page,per_page,error_out=False)
-    return jsonify({'data': {'properties': properties.items, 'total': propertyCount}, 'msg': 'success'}), 200
+   
+    properties = Property.query.filter(or_(Property.name.ilike(f'%{q}%'))).filter_by(area=area.lower())
+
+    if bed != '':
+        properties = properties.filter_by(bedrooms=bed)
+    
+    propertyCount = properties.count()
+    properties = properties.order_by(Property.updated_at.desc()).paginate(page,per_page,error_out=False).items
+
+    return jsonify({'data': {'properties': properties, 'total': propertyCount}, 'msg': 'success'}), 200
+
+
+
 
 @propertyRoute.route('/<path:area>/<path:propName>', methods=['GET'])
 def get_property_by_id(area, propName):
+
     property = Property.query.filter_by(area=area,name=propName.replace('-',' ')).first()
+
     return jsonify({'data': property, 'msg': 'success'}), 200
+
+
+
 
 @propertyRoute.route('/delete', methods=['POST'])
 @jwt_required
@@ -48,6 +68,8 @@ def delete_property():
     db.session.commit()
     properties = Property.query.all()
     return jsonify({'data': properties, 'msg': 'success'}), 201
+
+
 
 
 @propertyRoute.route('/create', methods=['POST'])
