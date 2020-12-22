@@ -9,14 +9,15 @@ from threading import Thread
 
 from server.models.Properties import Property, Price
 from server.util.instances import db, mail
+from server.util.helpers import get_years, get_areas, no_of_Beds
 
-supportRoute = Blueprint('support', __name__, url_prefix="/api/support")
+supportRoute = Blueprint('support', __name__, url_prefix="/api")
 
 
 CORS(supportRoute)
 
 
-@supportRoute.route('/contact-us', methods=['POST'])
+@supportRoute.route('/support/contact-us', methods=['POST'])
 @jwt_required
 def contact_us():
     email = request.json.get('email', None)
@@ -42,6 +43,19 @@ def contact_us():
     
     
     return jsonify({'msg': 'Message Submitted', 'status': 'success'}), 201
+
+@supportRoute.route('/areas')
+def allArea():
+    return jsonify({'data': get_areas(), 'status': 'success'}), 200
+
+@supportRoute.route('/bedroom')
+def allBeds():
+    return jsonify({'data': no_of_Beds(), 'status': 'success'}), 200
+
+@supportRoute.route('/years')
+def allYears():
+    return jsonify({'data': get_years(), 'status': 'success'}), 202
+
 
 
 class SupportMail():

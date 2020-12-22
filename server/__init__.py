@@ -13,7 +13,7 @@ from server.routes.support import supportRoute
 ##############UTILITIES############
 from server.util.instances import initializeDB, initializeJWT, initializeMail
 from server.admin import initializeAdmin
-from server.util.jsonEncoder import JSONEncoder
+from server.util.jsonEncoder import CustomJSONEncoder
     
 
 #create_app(test_config=None):
@@ -59,7 +59,7 @@ def create_app(env):
     '''change jsonify default JSON encoder to a custom Encode
     ### to support Model encoding for {user, properties, etc}
     '''
-    app.json_encoder = JSONEncoder
+    app.json_encoder = CustomJSONEncoder
 
 
     #Register Blueprints

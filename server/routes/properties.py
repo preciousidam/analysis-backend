@@ -17,6 +17,7 @@ def create_db():
     db.session.commit()
 
 
+
 @propertyRoute.route('/', methods=['GET'])
 def get_properties():
     properties = Property.query.order_by(Property.updated_at.desc()).all()

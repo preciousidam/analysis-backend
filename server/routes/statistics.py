@@ -7,6 +7,7 @@ from flask_cors import CORS
 
 from server.models.Properties import Property, Price
 from server.util.instances import db
+from server.util.helpers import no_of_Beds, get_areas, get_years
 
 statRoute = Blueprint('statistics', __name__, url_prefix="/api/stats")
 
@@ -14,7 +15,6 @@ statRoute = Blueprint('statistics', __name__, url_prefix="/api/stats")
 CORS(statRoute)
 
 def prices (a):
-    print(a.year)
     return a.amount
 
 
@@ -34,14 +34,15 @@ def avarage_rent(bed):
     countOniru = Property.query.filter_by(area='oniru').count()
 
     if countLekki > 0:
-        stats['lekki'] = list(numpy.array(stats['lekki'])/countLekki)
+        stats['lekki'] = list(numpy.floor_divide(stats['lekki'],countLekki))
     if countVi > 0:
-        stats['vi'] = list(numpy.array(stats['vi'])/countVi)
+        stats['vi'] = list(numpy.floor_divide(stats['vi'],countVi))
     if countIkoyi > 0:
-        stats['ikoyi'] = list(numpy.array(stats['ikoyi'])/countIkoyi)
+        stats['ikoyi'] = list(numpy.floor_divide(stats['ikoyi'],countIkoyi))
     if countOniru > 0:
-        stats['oniru'] = list(numpy.array(stats['oniru'])/countOniru)  
+        stats['oniru'] = list(numpy.floor_divide(stats['oniru'],countOniru))  
     
+
     return jsonify({'data': stats, 'msg': 'success'}), 200
 
 
@@ -70,10 +71,29 @@ def compare():
 
 
     if count1 > 0:
-        stats[area] = list(numpy.array(stats[area])/count1)
+        stats[area] = list(numpy.floor_divide(stats[area],count1))
     if count2 > 0:
-        stats[comarea] = list(numpy.array(stats[comarea])/count2)
+        stats[comarea] = list(numpy.floor_divide(stats[comarea],count2))
     
     return jsonify({'data': stats, 'msg': 'success'}), 200
 
-    
+
+@statRoute.route('/<path:area>')
+def area_stats(area):
+    beds = no_of_Beds()
+    allAverage = dict()
+    print(get_years())
+    for bed in beds:
+        properties = Property.query.filter_by(bedrooms=bed).all()
+        total = len(properties)
+        initial_prices = numpy.pad([], pad_width=(len(get_years())-len([]),0))
+
+        for prop in properties:
+            price = list(map(prices,prop.rents))
+            price = numpy.pad(price, pad_width=(len(get_years())-len(price),0))
+            initial_prices = list(map(add,initial_prices,price))
+        
+        allAverage.update({bed:list(numpy.floor_divide(initial_prices,total))})
+
+
+    return jsonify({'data': allAverage, 'msg': 'success'}), 200
