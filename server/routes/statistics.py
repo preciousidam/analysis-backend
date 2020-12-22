@@ -21,26 +21,21 @@ def prices (a):
 @statRoute.route('/all-average/<int:bed>', methods=['GET'])
 def avarage_rent(bed):
     properties = Property.query.filter_by(bedrooms=bed).all()
-    stats = {'lekki': [0,0,0,0,0], 'vi': [0,0,0,0,0], 'ikoyi': [0,0,0,0,0], 'oniru': [0,0,0,0,0]}
+    areas = get_areas()
+    years = get_years()
+    stats = dict()
+
+    for area in areas:
+        stats.update({area: numpy.pad([], pad_width=(len(years)-len([]),0))})
 
     for prop in properties:
         price = list(map(prices,prop.rents))
-        price = numpy.pad(price, pad_width=(5-len(price),0))
+        price = numpy.pad(price, pad_width=(len(years)-len(price),0))
         stats[prop.area] = list(map(add,stats[prop.area],price))
 
-    countLekki = Property.query.filter_by(area='lekki').count()
-    countVi = Property.query.filter_by(area='vi').count()
-    countIkoyi = Property.query.filter_by(area='ikoyi').count()
-    countOniru = Property.query.filter_by(area='oniru').count()
-
-    if countLekki > 0:
-        stats['lekki'] = list(numpy.floor_divide(stats['lekki'],countLekki))
-    if countVi > 0:
-        stats['vi'] = list(numpy.floor_divide(stats['vi'],countVi))
-    if countIkoyi > 0:
-        stats['ikoyi'] = list(numpy.floor_divide(stats['ikoyi'],countIkoyi))
-    if countOniru > 0:
-        stats['oniru'] = list(numpy.floor_divide(stats['oniru'],countOniru))  
+    for area in areas:
+        count = Property.query.filter_by(area=area,bedrooms=bed).count()
+        stats[area] = list(numpy.floor_divide(stats[area],count))
     
 
     return jsonify({'data': stats, 'msg': 'success'}), 200
@@ -66,8 +61,8 @@ def compare():
         price = numpy.pad(price, pad_width=(5-len(price),0))
         stats[comarea] = list(map(add,stats[comarea],price))
 
-    count1 = Property.query.filter_by(area=area).count()
-    count2 = Property.query.filter_by(area=comarea).count()
+    count1 = len(props)
+    count2 = len(propCom)
 
 
     if count1 > 0:
@@ -82,15 +77,16 @@ def compare():
 def area_stats(area):
     beds = no_of_Beds()
     allAverage = dict()
-    print(get_years())
+    years = get_years()
+    
     for bed in beds:
-        properties = Property.query.filter_by(bedrooms=bed).all()
+        properties = Property.query.filter_by(area=area,bedrooms=bed).all()
         total = len(properties)
-        initial_prices = numpy.pad([], pad_width=(len(get_years())-len([]),0))
+        initial_prices = numpy.pad([], pad_width=(len(years)-len([]),0))
 
         for prop in properties:
             price = list(map(prices,prop.rents))
-            price = numpy.pad(price, pad_width=(len(get_years())-len(price),0))
+            price = numpy.pad(price, pad_width=(len(years)-len(price),0))
             initial_prices = list(map(add,initial_prices,price))
         
         allAverage.update({bed:list(numpy.floor_divide(initial_prices,total))})
