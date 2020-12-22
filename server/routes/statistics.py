@@ -29,13 +29,13 @@ def avarage_rent(bed):
         total = len(properties)
         initial_prices = numpy.pad([], pad_width=(len(years)-len([]),0))
         allAverage.update({area:initial_prices})
-        
+
         for prop in properties:
             price = list(map(prices,prop.rents))
             price = numpy.pad(price, pad_width=(len(years)-len(price),0))
             initial_prices = list(map(add,initial_prices,price))
         
-        if total != 0:
+        if total > 0:
             allAverage.update({area:list(numpy.floor_divide(initial_prices,total))})
 
 
@@ -84,13 +84,15 @@ def area_stats(area):
         properties = Property.query.filter_by(area=area,bedrooms=bed).all()
         total = len(properties)
         initial_prices = numpy.pad([], pad_width=(len(years)-len([]),0))
+        allAverage.update({bed:initial_prices})
 
         for prop in properties:
             price = list(map(prices,prop.rents))
             price = numpy.pad(price, pad_width=(len(years)-len(price),0))
             initial_prices = list(map(add,initial_prices,price))
-        
-        allAverage.update({bed:list(numpy.floor_divide(initial_prices,total))})
+
+        if total > 0:
+            allAverage.update({bed:list(numpy.floor_divide(initial_prices,total))})
 
 
     return jsonify({'data': allAverage, 'msg': 'success'}), 200
