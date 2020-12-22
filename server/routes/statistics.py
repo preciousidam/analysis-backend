@@ -20,25 +20,26 @@ def prices (a):
 
 @statRoute.route('/all-average/<int:bed>', methods=['GET'])
 def avarage_rent(bed):
-    properties = Property.query.filter_by(bedrooms=bed).all()
     areas = get_areas()
+    allAverage = dict()
     years = get_years()
-    stats = dict()
-
-    for area in areas:
-        stats.update({area: numpy.pad([], pad_width=(len(years)-len([]),0))})
-
-    for prop in properties:
-        price = list(map(prices,prop.rents))
-        price = numpy.pad(price, pad_width=(len(years)-len(price),0))
-        stats[prop.area] = list(map(add,stats[prop.area],price))
-
-    for area in areas:
-        count = Property.query.filter_by(area=area,bedrooms=bed).count()
-        stats[area] = list(numpy.floor_divide(stats[area],count))
     
+    for area in areas:
+        properties = Property.query.filter_by(area=area,bedrooms=bed).all()
+        total = len(properties)
+        initial_prices = numpy.pad([], pad_width=(len(years)-len([]),0))
+        allAverage.update({area:initial_prices})
+        
+        for prop in properties:
+            price = list(map(prices,prop.rents))
+            price = numpy.pad(price, pad_width=(len(years)-len(price),0))
+            initial_prices = list(map(add,initial_prices,price))
+        
+        if total != 0:
+            allAverage.update({area:list(numpy.floor_divide(initial_prices,total))})
 
-    return jsonify({'data': stats, 'msg': 'success'}), 200
+
+    return jsonify({'data': allAverage, 'msg': 'success'}), 200
 
 
 @statRoute.route('/compare')
