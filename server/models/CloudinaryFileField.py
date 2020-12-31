@@ -31,14 +31,12 @@ class CLoudinaryFileUploadField(FileUploadField):
     
 
     def _save_file(self, data, filename):
-        print(data)
-        
+       
         file = uploader.upload(data.read(), 
             resource_type = "raw", 
             public_id=f'reports/{filename}', 
             overwrite=self._allow_overwrite
         )
         #data.save(path)
-        print(file)
 
         return file['public_id']

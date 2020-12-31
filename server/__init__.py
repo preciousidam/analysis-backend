@@ -9,6 +9,7 @@ from server.routes.properties import propertyRoute
 from server.routes.statistics import statRoute
 from server.routes.search import searchRoute
 from server.routes.support import supportRoute
+from server.routes.reports import reportRoute
 
 ##############UTILITIES############
 from server.util.instances import initializeDB, initializeJWT, initializeMail
@@ -68,6 +69,7 @@ def create_app(env):
     app.register_blueprint(statRoute)
     app.register_blueprint(searchRoute)
     app.register_blueprint(supportRoute)
+    app.register_blueprint(reportRoute)
 
     @app.route('/')
     def index():

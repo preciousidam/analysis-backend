@@ -32,7 +32,7 @@ class Report(db.Model):
             'id': self.id,
             'title': self.title,
             'description': self.description,
-            'file': self.file,
+            'file': f'https://res.cloudinary.com/kblinsurance/raw/upload/v1608312210/{self.file.decode("utf-8")}',
             'date': self.date,
             'created_at': self.created_at,
             'updated_at': self.updated_at,
