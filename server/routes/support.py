@@ -54,7 +54,7 @@ def allBeds():
 
 @supportRoute.route('/years')
 def allYears():
-    return jsonify({'data': get_years(), 'status': 'success'}), 202
+    return jsonify({'data': get_years(), 'status': 'success'}), 200
 
 
 

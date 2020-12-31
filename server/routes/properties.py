@@ -5,6 +5,7 @@ from flask_cors import CORS
 
 from server.models.Properties import Property, Price
 from server.util.instances import db
+from server.util.helpers import findAll
 
 
 propertyRoute = Blueprint('properties', __name__, url_prefix='/api/properties')
@@ -23,7 +24,13 @@ def get_properties():
     properties = Property.query.order_by(Property.updated_at.desc()).all()
     return jsonify({'data': properties, 'msg': 'success'}), 200
 
-
+@propertyRoute.route('/search', methods=['GET'])
+def search_properties():
+    q = request.args.get('q','')
+    type = request.args.get('type','')
+    page= int(request.args.get('page', 1), base=10)
+    properties, total = findAll(q,type, page)
+    return jsonify({'data': {'properties': properties, 'total': total}, 'msg': 'success'}), 200
 
 @propertyRoute.route('/<path:area>', methods=['GET'])
 def get_property_in_area(area):

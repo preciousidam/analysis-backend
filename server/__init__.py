@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for
 from flask_cors import CORS
 
 
@@ -69,7 +69,9 @@ def create_app(env):
     app.register_blueprint(searchRoute)
     app.register_blueprint(supportRoute)
 
-
+    @app.route('/')
+    def index():
+        return redirect(url_for('admin.index'))
 
     #initialize CORS
     CORS(app)

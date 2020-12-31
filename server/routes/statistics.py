@@ -21,7 +21,7 @@ def prices (a):
 @statRoute.route('/all-average/<int:bed>', methods=['GET'])
 def avarage_rent(bed):
     areas = get_areas()
-    allAverage = dict()
+    allAverage = dict(ikoyi=[], vi=[])
     years = get_years()
     
     for area in areas:
@@ -79,9 +79,10 @@ def area_stats(area):
     beds = no_of_Beds()
     allAverage = dict()
     years = get_years()
+    type = request.args.get('type','flat')
     
     for bed in beds:
-        properties = Property.query.filter_by(area=area,bedrooms=bed).all()
+        properties = Property.query.filter_by(area=area,bedrooms=bed).filter(Property.type.ilike(f"%{type}%")).all()
         total = len(properties)
         initial_prices = numpy.pad([], pad_width=(len(years)-len([]),0))
         allAverage.update({bed:initial_prices})

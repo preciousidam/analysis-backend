@@ -1,4 +1,8 @@
-from server.models.Properties import Property
+from sqlalchemy import func, or_
+
+
+from server.models.Properties import Property, Price
+from server.util.instances import db
 
 
 def no_of_Beds():
@@ -29,3 +33,13 @@ def get_years():
             dst.add(rent.year)
 
     return list(dst)
+
+
+def findAll(q,type, page):
+    per_page=10
+    prop = Property.query.filter_by(type=type)\
+        .filter(or_(Property.area.ilike(f'%{q}%'),Property.name.ilike(f'%{q}%')))
+
+    total = prop.count()     
+    
+    return prop.paginate(page,per_page,error_out=False).items, total
