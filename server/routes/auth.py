@@ -1,14 +1,16 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, current_app
 from flask_jwt_extended import (create_access_token, 
     get_jwt_claims, jwt_refresh_token_required, 
     create_refresh_token, get_jwt_identity, jwt_required
 )
 from datetime import timedelta
 from flask_cors import CORS
+from flask_mail import Message
+from threading import Thread
 
 from server.util.instances import jwt
-from server.models.User import User, Role, UserRole
-from server.util.instances import db
+from server.models.User import User, Role, UserRole, ResetToken
+from server.util.instances import db, mail
 
 
 authRoute = Blueprint('auth', __name__, url_prefix='/api/auth')
@@ -87,6 +89,47 @@ def passwordReset():
 
     return jsonify({'status': 'success', 'msg': 'Password change successful'}), 200
 
+@authRoute.route('/forgot-password', methods=['POST'])
+def forgot_password():
+    email = request.json.get('email')
+    
+    if not email:
+        return {'status': 'error', 'msg': 'Email not provided'}, 400
+
+    reset = ResetToken.query.filter_by(email=email).first()
+    
+    if not reset:
+
+        reset = ResetToken(email=email)
+        db.session.add(reset)
+        db.session.commit()
+    else:
+        reset.updateToken()
+        db.session.commit()
+
+    mail = ResetMail(email, reset.get_token())
+    mail.create_mail()
+
+    return jsonify({'status': 'success', 'msg': 'Please check your mail for how to reset password'}), 200
+
+
+@authRoute.route('/forgot-password/<path:token>', methods=['POST'])
+def forgot_password_token(token):
+    password = request.json.get('password')
+    reset = ResetToken.query.filter_by(token=token).first()
+
+    if not reset:
+        return jsonify({'status': 'error', 'msg': 'reset link expired. please request new link'}), 400
+    
+
+    user = User.query.filter_by(email=reset.email).first()
+    user.hashPassword(password)
+    db.session.commit()
+
+    mail = ResetSuccessfulMail(user.email)
+    mail.create_mail()
+
+    return jsonify({'status': 'success', 'msg': 'password reset successful, please login with new password'}), 200
 
 
 @authRoute.route('/refresh', methods=['POST'])
@@ -98,3 +141,52 @@ def refresh():
         'token': create_access_token(identity=current_user, expires_delta=expires)
     }
     return jsonify(ret), 200
+
+
+
+class ResetMail():
+
+    def __init__(self, email, token):
+        self.subject = "Password Reset"
+        self.email = email
+        self.token = token
+        self.body = f'Hi,\n You requested a password reset, please use the link below to reset your password\n https://napims.herokuapp.com/reset-password/{self.token} \n\n please ignore if you are not the one that initiated this.'
+
+    def create_mail(self):
+        app = current_app._get_current_object()
+        
+        msg = Message(
+            subject=self.subject, 
+            recipients=[self.email],
+            body=self.body
+        )
+        thr = Thread(target=self.send_mail, args=[app,msg])
+        thr.start()
+
+        
+    def send_mail(self, app, msg):
+        with app.app_context():
+            mail.send(msg)
+
+class ResetSuccessfulMail():
+    def __init__(self, email):
+        self.subject = "Password Reset"
+        self.email = email
+        self.body = f'Hi,\n Your password has been reset, click this link to login to your account.\n https://napims.herokuapp.com \n\n Thank you.'
+
+    def create_mail(self):
+        app = current_app._get_current_object()
+        
+        msg = Message(
+            subject=self.subject, 
+            recipients=[self.email],
+            body=self.body
+        )
+        thr = Thread(target=self.send_mail, args=[app,msg])
+        thr.start()
+
+        
+    def send_mail(self, app, msg):
+        with app.app_context():
+            mail.send(msg)
+    

@@ -3,6 +3,7 @@ from datetime import datetime as dt
 from werkzeug.security import generate_password_hash, check_password_hash
 from enum import Enum
 from flask_admin.contrib.sqla import ModelView
+from secrets import token_urlsafe
 
 
 class User(db.Model):
@@ -43,13 +44,18 @@ class User(db.Model):
 class ResetToken(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True, nullable=False)
-    token = db.Column(db.String(255), nullable=False)
+    token = db.Column(db.String(255), nullable=False, default=token_urlsafe(16))
     created_at = db.Column(db.DateTime(timezone=True), default=dt.now())
     updated_at = db.Column(db.DateTime(timezone=True), default=dt.now(), onupdate=dt.now())
 
     def __repr__(self):
         return 'Reset token for %r' % self.email
 
+    def updateToken(self):
+        self.token = token_urlsafe(16)
+
+    def get_token(self):
+        return self.token
     
     def json(self):
         return {
@@ -81,6 +87,7 @@ class Role(db.Model):
             'role': self.title,
             'permissions': self.permissions,
         }
+
 
 class UserRole(db.Model):
     __tablename__ = 'user_roles'

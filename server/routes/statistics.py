@@ -97,3 +97,13 @@ def area_stats(area):
 
 
     return jsonify({'data': allAverage, 'msg': 'success'}), 200
+
+
+@statRoute.route('/minmax/<path:area>')
+def min_max(area):
+    beds = no_of_Beds()
+    years = get_years()
+    type = request.args.get('type','flat')
+
+    for bed in beds:
+        pass
