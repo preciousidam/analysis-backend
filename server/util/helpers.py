@@ -34,6 +34,15 @@ def get_years():
 
     return list(dst)
 
+def get_types():
+    properties = Property.query.all()
+    dst = set()
+
+    for prop in properties:
+        dst.add(prop.type)
+
+    return list(dst)
+
 
 def findAll(q,type, page):
     per_page=10

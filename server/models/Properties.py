@@ -1,6 +1,8 @@
 from server.util.instances import db
+from sqlalchemy.orm import backref
 from datetime import datetime as dt
 from flask_admin.contrib.sqla import ModelView
+from sqlalchemy.orm import backref
 
 
 class Property(db.Model):
@@ -25,7 +27,7 @@ class Property(db.Model):
     updated_at = db.Column(db.DateTime(timezone=True), default=dt.now(), onupdate=dt.now())
 
     def __repr__(self):
-        return '{} at {}'.format(self.name, self.address)
+        return f'{self.name} at {self.address}'
 
     
     def json(self):
@@ -55,6 +57,7 @@ class Price(db.Model):
     __tablename__ = 'prices'
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     property_id = db.Column(db.Integer, db.ForeignKey('properties.id', ondelete='CASCADE'), nullable=False)
+    property = db.relationship('Property', backref=backref('Price', uselist=False),)
     year = db.Column(db.Integer, nullable=False)
     amount = db.Column(db.Float, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), default=dt.now())
@@ -62,8 +65,41 @@ class Price(db.Model):
 
 
     def __repr__(self):
-        return 'Price list for  property with id {}'.format(self.property_id)
+        return f'{self.property} {self.year} rent({self.amount})\n'
 
+    def __gt__(self, other):
+        
+        if(self.amount > other.amount):
+            return True
+
+        else:
+            return False
+
+    
+    def __lt__(self, other):
+        
+        if(self.amount < other.amount):
+            return True
+
+        else:
+            return False
+
+    def __ge__(self, other):
+        
+        if(self.amount > other.amount or self.amount == other.amount):
+            return True
+
+        else:
+            return False
+
+    
+    def __le__(self, other):
+        
+        if(self.amount < other.amount or self.amount == other.amount):
+            return True
+
+        else:
+            return False
     
     def json(self):
         return {
@@ -87,7 +123,7 @@ class PropertyAdmin(ModelView):
     inline_models = [(Price,dict(form_columns=['id', 'year', 'amount']))]
     column_labels = {'built': 'Year built', 'serv_charge': 'Service charge'}
     column_sortable_list = ('area', 'bedrooms', 'name', 'built',)
-    column_searchable_list = ('name', 'area',)
+    column_searchable_list = ('name', 'area', 'address', 'type')
     column_exclude_list=('created_at', 'updated_at')
     column_default_sort = ('name',False)
     can_export = True

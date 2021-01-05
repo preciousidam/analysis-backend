@@ -9,7 +9,7 @@ from threading import Thread
 
 from server.models.Properties import Property, Price
 from server.util.instances import db, mail
-from server.util.helpers import get_years, get_areas, no_of_Beds
+from server.util.helpers import get_years, get_areas, no_of_Beds, get_types
 
 supportRoute = Blueprint('support', __name__, url_prefix="/api")
 
@@ -55,6 +55,10 @@ def allBeds():
 @supportRoute.route('/years')
 def allYears():
     return jsonify({'data': get_years(), 'status': 'success'}), 200
+
+@supportRoute.route('/types')
+def allTypes():
+    return jsonify({'data': get_types(), 'status': 'success'}), 200
 
 
 

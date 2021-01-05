@@ -4,10 +4,12 @@ from operator import add
 import numpy
 from sqlalchemy import func
 from flask_cors import CORS
+from functools import reduce
+from json import dumps
 
 from server.models.Properties import Property, Price
 from server.util.instances import db
-from server.util.helpers import no_of_Beds, get_areas, get_years
+from server.util.helpers import no_of_Beds, get_areas, get_years, get_types
 
 statRoute = Blueprint('statistics', __name__, url_prefix="/api/stats")
 
@@ -102,8 +104,32 @@ def area_stats(area):
 @statRoute.route('/minmax/<path:area>')
 def min_max(area):
     beds = no_of_Beds()
-    years = get_years()
+    year = get_years()[-1]
     type = request.args.get('type','flat')
+    result = dict()
 
     for bed in beds:
-        pass
+        prices = Price.query.filter_by(year=year).join(Price.property).filter(Property.bedrooms==bed, Property.type == type, Property.area == area).all()
+        if(len(prices) > 0):
+            max = reduce(lambda acc, next: acc if acc >= next else next, prices)
+            min = reduce(lambda acc, next: acc if acc <= next else next, prices)
+
+            result[bed] = dict(max=max.property,min=min.property)
+
+    
+
+    return jsonify({'data': result, 'msg': 'success'}), 200
+
+@statRoute.route('/types/<path:area>')
+def type_stat(area):
+    
+    total = dict()
+    properties = Property.query.filter_by(area=area.lower()).all()
+
+    for prop in properties:
+        if prop.type in total:
+            total[prop.type] = total[prop.type] + 1
+        else:
+            total[prop.type] = 1
+
+    return jsonify({'data': total, 'msg': 'success'}), 200
