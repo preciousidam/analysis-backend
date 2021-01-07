@@ -26,7 +26,6 @@ class CLoudinaryFileUploadField(FileUploadField):
             raise ValidationError(gettext('File "%s" already exists.' % self.data.filename))
 
     def _delete_file(self, filename):
-        print(filename)
         uploader.destroy(f'reports/{filename}')
     
 
@@ -37,6 +36,5 @@ class CLoudinaryFileUploadField(FileUploadField):
             public_id=f'reports/{filename}', 
             overwrite=self._allow_overwrite
         )
-        #data.save(path)
 
         return file['public_id']

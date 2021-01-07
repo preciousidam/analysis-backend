@@ -44,16 +44,7 @@ class Report(db.Model):
 
 class ReportView(ModelView):
 
-    def pdf_validation(form, field):
-        if field.data:
-            filename = field.data.filename
-            if filename[-4:] != '.pdf': 
-                raise ValidationError('file must be .pdf')
-            return True
-
-
     form_overrides = dict(file= CLoudinaryFileUploadField)
-    form_args = dict(file=dict(
-        validators=[pdf_validation], 
+    form_args = dict(file=dict( 
         base_path='https://res.cloudinary.com/kblinsurance/raw/upload/v1608312210/',
         ))
