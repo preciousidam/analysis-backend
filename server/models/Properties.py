@@ -100,6 +100,9 @@ class Price(db.Model):
 
         else:
             return False
+
+    def __add__(self,other):
+        return self.amount + other.amount
     
     def json(self):
         return {

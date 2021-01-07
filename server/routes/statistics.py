@@ -9,7 +9,8 @@ from json import dumps
 
 from server.models.Properties import Property, Price
 from server.util.instances import db
-from server.util.helpers import no_of_Beds, get_areas, get_years, get_types
+from server.util.helpers import (no_of_Beds, get_areas, 
+    get_years, get_types, get_average, get_average_type)
 
 statRoute = Blueprint('statistics', __name__, url_prefix="/api/stats")
 
@@ -27,18 +28,11 @@ def avarage_rent(bed):
     years = get_years()
     
     for area in areas:
-        properties = Property.query.filter_by(area=area,bedrooms=bed).all()
-        total = len(properties)
-        initial_prices = numpy.pad([], pad_width=(len(years)-len([]),0))
-        allAverage.update({area:initial_prices})
-
-        for prop in properties:
-            price = list(map(prices,prop.rents))
-            price = numpy.pad(price, pad_width=(len(years)-len(price),0))
-            initial_prices = list(map(add,initial_prices,price))
+        yearAve = []
+        for year in years:
+            yearAve.append(get_average(year, area, bed))
         
-        if total > 0:
-            allAverage.update({area:list(numpy.floor_divide(initial_prices,total))})
+        allAverage.update({area: yearAve})
 
 
     return jsonify({'data': allAverage, 'msg': 'success'}), 200
@@ -81,21 +75,14 @@ def area_stats(area):
     beds = no_of_Beds()
     allAverage = dict()
     years = get_years()
-    type = request.args.get('type','flat')
+    aptType = request.args.get('type','flat')
     
     for bed in beds:
-        properties = Property.query.filter_by(area=area,bedrooms=bed).filter(Property.type.ilike(f"%{type}%")).all()
-        total = len(properties)
-        initial_prices = numpy.pad([], pad_width=(len(years)-len([]),0))
-        allAverage.update({bed:initial_prices})
-
-        for prop in properties:
-            price = list(map(prices,prop.rents))
-            price = numpy.pad(price, pad_width=(len(years)-len(price),0))
-            initial_prices = list(map(add,initial_prices,price))
-
-        if total > 0:
-            allAverage.update({bed:list(numpy.floor_divide(initial_prices,total))})
+        yearAve = []
+        for year in years:
+            yearAve.append(get_average_type(year, area, bed, aptType))
+        
+        allAverage.update({bed: yearAve})
 
 
     return jsonify({'data': allAverage, 'msg': 'success'}), 200

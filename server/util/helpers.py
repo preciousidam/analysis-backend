@@ -1,4 +1,6 @@
 from sqlalchemy import func, or_
+from functools import reduce
+import numpy as np
 
 
 from server.models.Properties import Property, Price
@@ -52,3 +54,27 @@ def findAll(q,type, page):
     total = prop.count()     
     
     return prop.paginate(page,per_page,error_out=False).items, total
+
+
+def get_average_type(year, area, bed, type):
+
+    prices = np.array(Price.query.filter_by(year=year).join(Price.property).filter(Property.bedrooms==bed, Property.type == type, Property.area == area).all())
+    
+    sumTotal = reduce(lambda acc, a: acc + a.amount, prices, 0)
+    
+    if np.size(prices) > 0:
+        return sumTotal/np.size(prices)
+    return 0
+
+
+def get_average(year, area, bed):
+
+    prices = np.array(Price.query.filter_by(year=year).join(Price.property).filter(Property.bedrooms==bed, Property.area == area).all())
+    
+    sumTotal = reduce(lambda acc, a: acc + a.amount, prices, 0)
+    
+
+    return sumTotal/np.size(prices)
+
+    
+    
