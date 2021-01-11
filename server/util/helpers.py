@@ -62,9 +62,9 @@ def get_average_type(year, area, bed, type):
     
     sumTotal = reduce(lambda acc, a: acc + a.amount, prices, 0)
     
-    if np.size(prices) > 0:
-        return sumTotal/np.size(prices)
-    return 0
+    '''if np.size(prices) > 0:
+        return sumTotal/np.size(prices)'''
+    return sumTotal/(np.size(prices) if np.size(prices) else 1)
 
 
 def get_average(year, area, bed):
