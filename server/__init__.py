@@ -44,7 +44,7 @@ def create_app(env):
         pass
 
     admin = Admin(app, 'Napims Admin', 
-        index_view=MyAdminIndexView(name="Home", url='/'), 
+        index_view=MyAdminIndexView(name="Home", url='/',menu_icon_value="fa-home",menu_icon_type="fas"), 
         base_template='', template_mode='bootstrap4')
 
     #initialize Database
@@ -92,9 +92,8 @@ def create_app(env):
 
     @app.route('/test')
     def index():
-        users = User.query.first()
-        userRole = UserRole.query.filter_by(user_id=users.id).all()
-        return jsonify(dict(user=users, role=userRole))
+        
+        return render_template('admin/base.html')
 
     #initialize CORS
     CORS(app)

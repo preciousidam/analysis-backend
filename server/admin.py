@@ -22,11 +22,11 @@ def initializeLogin(app):
         return User.query.get(user_id)
 
 def initializeAdmin(admin):
-    admin.add_view(UserAdminView(User, db.session, category="Users", name="Users", url="users"))
-    admin.add_view(RoleAdminView(Role, db.session, category="Users", name="Roles", url="roles"))
-    admin.add_view(MyModelView(ResetToken, db.session, category="Users", name="Reset-tokens", url="reset-tokens"))
-    admin.add_view(PropertyAdmin(Property, db.session, name="Properties"))
-    admin.add_view(ReportView(Report, db.session, name='Reports'))
+    admin.add_view(UserAdminView(User, db.session, name="Users", url="users",menu_icon_value="fa-users",menu_icon_type="fas"))
+    #admin.add_view(RoleAdminView(Role, db.session, category="Users", name="Roles", url="roles"))
+    #admin.add_view(MyModelView(ResetToken, db.session, category="Users", name="Reset-tokens", url="reset-tokens"))
+    admin.add_view(PropertyAdmin(Property, db.session, name="Properties",menu_icon_value="fa-building",menu_icon_type="fas"))
+    admin.add_view(ReportView(Report, db.session, name='Reports',menu_icon_value="fa-file-pdf",menu_icon_type="fas"))
 
 
 class MyModelView(ModelView):
@@ -37,6 +37,9 @@ class MyModelView(ModelView):
 
         else:
             False
+
+    def is_visible(self):
+        return True
 
     def inaccessible_callback(self, name, **kwargs):
         return redirect(url_for('admin.login_view', next=request.url))
@@ -78,7 +81,7 @@ class MyAdminIndexView(AdminIndexView):
                 return render_template('admin/login.html')
             
             login_user(user)
-            
+            flash('Logged In successful')
             return redirect(next or url_for('.index'))
 
         return render_template('admin/login.html')
