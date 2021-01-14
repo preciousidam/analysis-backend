@@ -1,0 +1,50 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+  <div style="width: 100%;">
+      <section class="summ-container container">
+          <div class="row">
+            <div class="col-md-3">
+                <div class="summ usr">
+                    <p>Users</p>
+                    <span>{{40}}</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="summ prp">
+                    <p>Properties</p>
+                    <span>{{300}}</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="summ rep">
+                    <p>Reports</p>
+                    <span>{{20}}</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="summ hr">
+                    <p>Reports</p>
+                    <span>{{20}}</span>
+                </div>
+            </div>
+        </div>
+      </section>
+      <section class="container">
+        <div class="row">
+            <div class="col-md-7">
+                <table id="view_stat" class="">
+                    <thead>
+                        <tr class="table-dark">
+                            
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="col-md-5">
+                
+            </div>
+        </div>
+      </section>
+  </div>
+{% endblock %}

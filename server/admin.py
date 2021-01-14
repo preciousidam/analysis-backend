@@ -100,7 +100,7 @@ class UserAdminView(MyModelView):
     form_args ={'is_active': dict(description='Check instead of deleting user to deactivate user')}
     column_auto_select_related = True
     column_hide_backrefs = False
-    column_exclude_list=('password')
+    column_exclude_list=('password', 'updated_at')
     inline_models = (UserRole,)
     column_labels = {'phone': 'Phone Number', 'is_active': 'Active'}
     column_sortable_list = ('name', 'email', 'username',)
@@ -128,7 +128,7 @@ class PropertyAdmin(MyModelView):
     column_labels = {'built': 'Year built', 'serv_charge': 'Service charge'}
     column_sortable_list = ('area', 'bedrooms', 'name', 'built',)
     column_searchable_list = ('name', 'area', 'address', 'type')
-    column_exclude_list=('created_at', 'updated_at')
+    column_exclude_list=('created_at', 'updated_at', 'units', 'serv_charge', 'sale_price', 'facilities', 'floors', 'land_size')
     column_default_sort = ('name',False)
     can_export = True
     column_editable_list = ('name', 'bedrooms', 'address', 'area', 'serv_charge', 'type', 'sale_price')
@@ -141,6 +141,7 @@ class PropertyAdmin(MyModelView):
 class ReportView(MyModelView):
 
     form_overrides = dict(file= CLoudinaryFileUploadField)
+    column_exclude_list= ('created_at', 'updated_at')
     form_args = dict(file=dict( 
         base_path='https://res.cloudinary.com/kblinsurance/raw/upload/v1608312210/',
         ))

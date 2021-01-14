@@ -6,6 +6,8 @@ html, body, #main{
     min-width: 100% !important;
     min-height: 100% !important;
     font-family: roboto;
+    max-width: 100% !important;
+    max-height: 100% !important;
 }
 
 #main>.row{
@@ -15,10 +17,17 @@ html, body, #main{
     min-height: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    position: relative;
 }
 
 #base-main{
-    margin-top: 50px;
+    max-width: 100% !important;
+    max-height: calc(100% - 66px) !important;
+    margin: 0 0 50px auto !important;
+    overflow-y: auto !important;
+    padding-top: 50px !important;
 }
 
 #brand{
@@ -53,7 +62,8 @@ html, body, #main{
     border-right: 1px solid #c9c9c9;
     padding: 0;
     margin: 0;
-    height: 100%;
+    height: inherit !important;
+    min-height: 100% !important;
 }
 
 #sidebar ul{
@@ -96,7 +106,7 @@ html, body, #main{
     z-index: 15;
     border-bottom: 1px solid #c6c6c6;
     padding: 0;
-    box-shadow: 2px 2px 2px 2px rgba(0,0,0, 0.2);
+    box-shadow: 2px 2px 2px 2px rgba(100,100,100, 0.2);
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -212,4 +222,58 @@ html, body, #main{
     display: inline !important;
     margin: 0;
     padding-left: 20px;
+}
+
+
+
+
+/******************************INDEX********************/
+
+.summ-container{
+    margin: 0 auto !important;
+}
+
+.summ{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px !important;
+    min-width: 60%;
+    background-color: #c6c6c6;
+    padding: 15px;
+    box-shadow: 2px 4px 3px 1px rgba(100,100,100, 0.2);
+    color: #fff !important;
+}
+
+.summ p{
+    margin: 0 !important;
+}
+
+.hr{
+    background-image: linear-gradient(to bottom right, #ffb82c, #f57f59);
+}
+
+.usr{
+    background-image: linear-gradient(to bottom right, #ec4887,#b954a4);
+}
+
+.prp{
+    background-image: linear-gradient(to bottom right, #875fc0, #5648ba);
+}
+
+.rep{
+    background-image: linear-gradient(to bottom right,#46c5f2, #6692d9);
+}
+
+.table-responsive td{
+    font-size: 12px !important;
+}
+
+.inline-field.card.card-body.bg-light{
+    margin: 20px 0 !important;
+}
+
+.pagination{
+    margin-bottom: 50px !important;
 }

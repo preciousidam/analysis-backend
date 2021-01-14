@@ -44,8 +44,7 @@ def create_app(env):
         pass
 
     admin = Admin(app, 'Napims Admin', 
-        index_view=MyAdminIndexView(name="Home", url='/',menu_icon_value="fa-home",menu_icon_type="fas"), 
-        base_template='', template_mode='bootstrap4')
+        index_view=MyAdminIndexView(name="Home", url='/',menu_icon_value="fa-home",menu_icon_type="fas", template="admin/index.html"), template_mode="bootstrap4")
 
     #initialize Database
     initializeDB(app)
