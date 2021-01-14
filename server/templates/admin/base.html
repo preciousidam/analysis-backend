@@ -90,7 +90,7 @@
                                 {% block access_control %}
                                     {% if current_user.is_authenticated %}
                                     <li class="profile dropdown">
-                                        <button class="dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <button class="dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
                                             <span class="initials">{{current_user.username[0]}}</span>
                                             <span>Hi, {{current_user.username}}</span>
                                         </button>
