@@ -3,9 +3,10 @@ from sqlalchemy.orm import backref
 from datetime import datetime as dt
 from flask_admin.contrib.sqla import ModelView
 from sqlalchemy.orm import backref
+from .Auth import Auth
 
 
-class Property(db.Model):
+class Property(db.Model, Auth):
     __tablename__ = 'properties'
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     name = db.Column(db.String(255), nullable=False)
@@ -113,27 +114,4 @@ class Price(db.Model):
 
 
     
-
-
-class PropertyAdmin(ModelView):
-    form_choices = {'area': [('ikoyi', 'Ikoyi'), ('vi', 'Victoria Island'), ('lekki', 'Lekki'), ('oniru', 'Oniru')],
-                    'state': [('lagos', 'Lagos')],
-                    'bedrooms': [(1,'1 Bedroom'), (2, '2 Bedroom'), (3, '3 Bedroom'), (4, '4 Bedroom'), (5, '5 Bedroom'), (6, '6 Bedroom'), (7, '7 Bedroom')],
-                    'type': [('Flat','Flat'), ('pent house', 'Pent House'), ('terrace', 'Terrace'), ("duplex", 'Duplex'), ("maisonette", 'Maisonette')]
-                    }
-    
-    column_auto_select_related = True
-    inline_models = [(Price,dict(form_columns=['id', 'year', 'amount']))]
-    column_labels = {'built': 'Year built', 'serv_charge': 'Service charge'}
-    column_sortable_list = ('area', 'bedrooms', 'name', 'built',)
-    column_searchable_list = ('name', 'area', 'address', 'type')
-    column_exclude_list=('created_at', 'updated_at')
-    column_default_sort = ('name',False)
-    can_export = True
-    column_editable_list = ('name', 'bedrooms', 'address', 'area', 'serv_charge', 'type', 'sale_price')
-    form_widget_args = {
-        'facilities': {
-            'rows': 6
-        }
-    }
 

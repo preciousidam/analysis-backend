@@ -5,7 +5,6 @@ from flask_admin.form.upload import FileUploadField
 from wtforms.validators import ValidationError
 from flask_admin.babel import gettext
 from server.util.instances import db
-from .CloudinaryFileField import CLoudinaryFileUploadField
 from datetime import datetime as dt
 import imghdr
 from flask import current_app
@@ -42,9 +41,3 @@ class Report(db.Model):
 
 
 
-class ReportView(ModelView):
-
-    form_overrides = dict(file= CLoudinaryFileUploadField)
-    form_args = dict(file=dict( 
-        base_path='https://res.cloudinary.com/kblinsurance/raw/upload/v1608312210/',
-        ))

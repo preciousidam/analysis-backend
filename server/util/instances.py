@@ -7,6 +7,7 @@ mail = Mail()
 db = SQLAlchemy()
 jwt = JWTManager()
 
+
 def initializeDB(app):
     db.init_app(app)
 
@@ -16,4 +17,3 @@ def initializeJWT(app):
 
 def initializeMail(app):
     mail.init_app(app) 
-

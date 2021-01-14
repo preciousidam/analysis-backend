@@ -1,6 +1,7 @@
 import os
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, jsonify
 from flask_cors import CORS
+from flask_admin import Admin
 
 
 ###########ROUTES##################
@@ -10,10 +11,11 @@ from server.routes.statistics import statRoute
 from server.routes.search import searchRoute
 from server.routes.support import supportRoute
 from server.routes.reports import reportRoute
+from server.models.User import User, UserRole
 
 ##############UTILITIES############
 from server.util.instances import initializeDB, initializeJWT, initializeMail
-from server.admin import initializeAdmin
+from server.admin import initializeAdmin, MyAdminIndexView, initializeLogin
 from server.util.jsonEncoder import CustomJSONEncoder
     
 
@@ -41,6 +43,9 @@ def create_app(env):
     except OSError:
         pass
 
+    admin = Admin(app, 'Napims Admin', 
+        index_view=MyAdminIndexView(name="Home", url='/'), 
+        base_template='', template_mode='bootstrap4')
 
     #initialize Database
     initializeDB(app)
@@ -52,16 +57,16 @@ def create_app(env):
     initializeJWT(app)
 
     #initialize Admin 
-    initializeAdmin(app)
+    initializeAdmin(admin)
 
-    #initialize Cloudinary
-    #initializeCloud(app)
+    #initialize Flask_login
+    initializeLogin(app)
    
     '''change jsonify default JSON encoder to a custom Encode
     ### to support Model encoding for {user, properties, etc}
     '''
     app.json_encoder = CustomJSONEncoder
-
+    
 
     #Register Blueprints
     app.register_blueprint(authRoute)
@@ -71,9 +76,25 @@ def create_app(env):
     app.register_blueprint(supportRoute)
     app.register_blueprint(reportRoute)
 
-    @app.route('/')
+
+    @app.after_request
+    def add_header(r):
+        """
+        Add headers to both force latest IE rendering engine or Chrome Frame,
+        and also to cache the rendered page for 10 minutes.
+        """
+        r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        r.headers["Pragma"] = "no-cache"
+        r.headers["Expires"] = "0"
+        r.headers['Cache-Control'] = 'public, max-age=0'
+        return r
+
+
+    @app.route('/test')
     def index():
-        return redirect(url_for('admin.index'))
+        users = User.query.first()
+        userRole = UserRole.query.filter_by(user_id=users.id).all()
+        return jsonify(dict(user=users, role=userRole))
 
     #initialize CORS
     CORS(app)

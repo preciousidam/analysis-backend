@@ -4,9 +4,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from enum import Enum
 from flask_admin.contrib.sqla import ModelView
 from secrets import token_urlsafe
+from .Auth import Auth
 
 
-class User(db.Model):
+class User(db.Model, Auth):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -22,6 +23,12 @@ class User(db.Model):
     def __repr__(self):
         return 'User %r' % self.username
 
+    def get_id(self):
+        return self.id
+
+    # Required for administrative interface
+    def __unicode__(self):
+        return self.username
     
     def json(self):
         return {
@@ -95,32 +102,14 @@ class UserRole(db.Model):
     user_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE'))
     role_id = db.Column(db.Integer(), db.ForeignKey('roles.id', ondelete='CASCADE'))
     user = db.relationship('User', backref="user_roles", lazy=False)
-    roles = db.relationship('Role', backref="user_roles", lazy=True)
+    role = db.relationship('Role', backref="user_roles", lazy=True)
     def __repr__(self):
         return '%r role' % self.user.name
 
-
-class RoleAdminView(ModelView):
-    form_choices = {'permissions': [(Permissions.READ, "Read"), (Permissions.WRITE, 'Write')]}
-
-class UserAdminView(ModelView):
-    
-    form_args ={'is_active': dict(description='Check instead of deleting user to deactivate user')}
-    column_auto_select_related = True
-    column_hide_backrefs = False
-    column_exclude_list=('password')
-    inline_models = (UserRole,)
-    column_labels = {'phone': 'Phone Number', 'is_active': 'Active'}
-    column_sortable_list = ('name', 'email', 'username',)
-    column_searchable_list = ('name', 'email','username',)
-    column_default_sort = [('name',False), ('email',False)]
-    column_editable_list = ('name', 'username', 'email',)
-    can_delete = False
-    
-    def on_form_prefill(self, form, id):
-        form.password.render_kw = {'readonly': True}
-
-    def on_model_change(self, form, model, is_created):
-        if is_created:
-            model.password = generate_password_hash(model.password)
-    
+    def json(self):
+        return {
+            'id': self.id,
+            'user': self.user_id,
+            'role': self.role.title,
+            'permissions': self.role.permissions,
+        }
