@@ -37,7 +37,7 @@ def get_property_in_area(area):
     page= int(request.args.get('page', 1), base=10)
 
     q = request.args.get('q').lower()
-    bed = request.args.get('bed').lower()
+    bed = request.args.get('bed')
     per_page=10
    
     properties = Property.query.filter(or_(Property.name.ilike(f'%{q}%'))).filter_by(area=area.lower())
