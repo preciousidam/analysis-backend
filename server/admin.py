@@ -11,7 +11,6 @@ from server.models.CloudinaryFileField import CLoudinaryFileUploadField
 
 
 
-
 def initializeLogin(app):
     login_manager = LoginManager()
     login_manager.init_app(app)
@@ -25,11 +24,13 @@ def initializeAdmin(admin):
     admin.add_view(UserAdminView(User, db.session, name="Users", url="users",menu_icon_value="fa-users",menu_icon_type="fas"))
     #admin.add_view(RoleAdminView(Role, db.session, category="Users", name="Roles", url="roles"))
     #admin.add_view(MyModelView(ResetToken, db.session, category="Users", name="Reset-tokens", url="reset-tokens"))
-    admin.add_view(PropertyAdmin(Property, db.session, name="Properties",menu_icon_value="fa-building",menu_icon_type="fas"))
-    admin.add_view(ReportView(Report, db.session, name='Reports',menu_icon_value="fa-file-pdf",menu_icon_type="fas"))
+    admin.add_view(PropertyAdmin(Property, db.session, name="Properties",menu_icon_value="fa-building",menu_icon_type="fas", url="properties"))
+    admin.add_view(ReportView(Report, db.session, name='Reports',menu_icon_value="fa-file-pdf",menu_icon_type="fas", url="reports"))
 
 
 class MyModelView(ModelView):
+    create_template = 'admin/create.html'
+    form_excluded_columns = ('created_at', 'updated_at')
     def is_accessible(self):
         if current_user and current_user.is_authenticated:
             userRole = UserRole.query.filter_by(user_id=current_user.id).first().json()
@@ -97,7 +98,7 @@ class RoleAdminView(MyModelView):
 
 class UserAdminView(MyModelView):
     
-    form_args ={'is_active': dict(description='Check instead of deleting user to deactivate user')}
+    #form_args ={'is_active': dict(description='Check instead of deleting user to deactivate user')}
     column_auto_select_related = True
     column_hide_backrefs = False
     column_exclude_list=('password', 'updated_at')
@@ -108,6 +109,15 @@ class UserAdminView(MyModelView):
     column_default_sort = [('name',False), ('email',False)]
     column_editable_list = ('name', 'username', 'email',)
     can_delete = False
+    form_columns = ('name', 'email', 'username', 'phone', 'password', 'is_active')
+    form_widget_args = dict(
+        name=dict(column_class='col-md-12'),
+        email=dict(column_class='col-md-12'),
+        username=dict(column_class='col-md-6'),
+        password=dict(column_class='col-md-6'),
+        is_active=dict(column_class='col-md-6'),
+        roles=dict(column_class='col-md-12'),
+    )
     
     def on_form_prefill(self, form, id):
         form.password.render_kw = {'readonly': True}
@@ -124,7 +134,17 @@ class PropertyAdmin(MyModelView):
                     }
     
     column_auto_select_related = True
-    inline_models = [(Price,dict(form_columns=['id', 'year', 'amount']))]
+    inline_models = [(Price,dict(
+        form_columns=['id', 'year', 'amount'],
+        form_widget_args= {
+            'year': {
+                'column_class': 'col-md-6'
+            },
+            'amount': {
+                'column_class': 'col-md-6'
+            }
+        }
+    ))]
     column_labels = {'built': 'Year built', 'serv_charge': 'Service charge'}
     column_sortable_list = ('area', 'bedrooms', 'name', 'built',)
     column_searchable_list = ('name', 'area', 'address', 'type')
@@ -132,9 +152,50 @@ class PropertyAdmin(MyModelView):
     column_default_sort = ('name',False)
     can_export = True
     column_editable_list = ('name', 'bedrooms', 'address', 'area', 'serv_charge', 'type', 'sale_price')
+    form_columns  = ('name', 'address', 'area', 'state', 'bedrooms','type', 'units', 'built', 'floors', 'land_size', 'sale_price', 'serv_charge', 'facilities')
     form_widget_args = {
         'facilities': {
-            'rows': 6
+            'rows': 6,
+            'column_class': 'col-md-12'
+        },
+        'name': {
+            'column_class': 'col-md-12'
+        },
+        'type': {
+            'column_class': 'col-md-3'
+        },
+        'address': {
+            'column_class': 'col-md-6'
+        },
+        'area': {
+            'column_class': 'col-md-3'
+        },
+        'state': {
+            'column_class': 'col-md-3'
+        },
+        'units': {
+            'column_class': 'col-md-3'
+        },
+        'built': {
+            'column_class': 'col-md-3'
+        },
+        'bedrooms': {
+            'column_class': 'col-md-3'
+        },
+        'land_size': {
+            'column_class': 'col-md-3'
+        },
+        'floors': {
+            'column_class': 'col-md-3'
+        },
+        'serv_charge': {
+            'column_class': 'col-md-3'
+        },
+        'sale_price': {
+            'column_class': 'col-md-3'
+        },
+        'rents': {
+            'column_class': 'col-md-12'
         }
     }
 
@@ -145,3 +206,10 @@ class ReportView(MyModelView):
     form_args = dict(file=dict( 
         base_path='https://res.cloudinary.com/kblinsurance/raw/upload/v1608312210/',
         ))
+
+    form_widget_args = dict(
+        title=dict(column_class="col-md-12"),
+        description=dict(column_class="col-md-12"),
+        date=dict(column_class="col-md-6"),
+        file=dict(column_class="col-md-6"),
+    )

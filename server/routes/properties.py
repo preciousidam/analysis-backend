@@ -34,7 +34,7 @@ def search_properties():
 
 @propertyRoute.route('/<path:area>', methods=['GET'])
 def get_property_in_area(area):
-    page= int(request.args.get('page', 1), base=10)
+    page= int(request.args.get('page', 1))
 
     q = request.args.get('q').lower()
     bed = request.args.get('bed')
@@ -49,7 +49,6 @@ def get_property_in_area(area):
     properties = properties.order_by(Property.updated_at.desc()).paginate(page,per_page,error_out=False).items
 
     return jsonify({'data': {'properties': properties, 'total': propertyCount}, 'msg': 'success'}), 200
-
 
 
 
