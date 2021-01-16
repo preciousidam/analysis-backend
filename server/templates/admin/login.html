@@ -24,7 +24,7 @@
             <div id="aside"></div>
             <div id="form-container">
                 <form id="auth-form" action="{{url_for('admin.login_view')}}" method="POST">
-                    <img id="logo" src="{{url_for('static', filename="img/logo.jpeg")}}" />
+                    <img id="logo" src="{{url_for('static', filename='img/logo.jpeg')}}" />
                     <h3>National Petroleum Investment Management Services</h3>
                     <p>Please enter login details</p>
                     {% with messages = get_flashed_messages() %}
