@@ -1,0 +1,10 @@
+{% extends 'admin/model/row_actions.html' %}
+
+{% macro edit_row(action, row_id, row) %}
+{{super()}}
+  {{ link(action, get_url('.edit_view', id=row_id, url=return_url), 'fas fa-pencil-alt fa fa-pencil glyphicon glyphicon-pencil') }}
+{% endmacro %}
+
+{% macro delete_row(action, row_id, row) %}
+  {{ link(action, get_url('.edit_view', id=row_id, url=return_url), 'fas fa-pencil-alt fa fa-pencil glyphicon glyphicon-pencil') }}
+{% endmacro %}

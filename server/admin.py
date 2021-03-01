@@ -127,8 +127,8 @@ class UserAdminView(MyModelView):
             model.password = generate_password_hash(model.password)
 
 class PropertyAdmin(MyModelView):
-    form_choices = {'area': [('ikoyi', 'Ikoyi'), ('vi', 'Victoria Island'), ('lekki', 'Lekki'), ('oniru', 'Oniru')],
-                    'state': [('lagos', 'Lagos')],
+    form_choices = {'area': [('ikoyi', 'Ikoyi'), ('vi', 'Victoria Island'), ('lekki', 'Lekki'), ('oniru', 'Oniru'), ('ph', 'Port Harcout')],
+                    'state': [('lagos', 'Lagos'),  ('port-harcourt', 'Port Harcout')],
                     'bedrooms': [(1,'1 Bedroom'), (2, '2 Bedroom'), (3, '3 Bedroom'), (4, '4 Bedroom'), (5, '5 Bedroom'), (6, '6 Bedroom'), (7, '7 Bedroom')],
                     'type': [('Flat','Flat'), ('pent house', 'Pent House'), ('terrace', 'Terrace'), ("duplex", 'Duplex'), ("maisonette", 'Maisonette')]
                     }

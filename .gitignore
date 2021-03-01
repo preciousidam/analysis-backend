@@ -7,7 +7,6 @@ __pycache__/
 *.so
 .env
 dont-push.txt
-server/static/bootstrap/
 
 activate.bat
 data.sql
