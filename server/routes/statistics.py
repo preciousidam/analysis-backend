@@ -23,7 +23,7 @@ def prices (a):
 
 @statRoute.route('/all-average/<int:bed>', methods=['GET'])
 def avarage_rent(bed):
-    areas = get_areas()
+    areas = ['vi','ikoyi','wuse II', 'ph', 'lekki', 'maitama']
     allAverage = dict(ikoyi=[], vi=[])
     years = get_years()
     
