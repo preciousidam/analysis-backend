@@ -1,11 +1,6 @@
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import jwt_required
-from operator import add
-import numpy
-from sqlalchemy import func
 from flask_cors import CORS
 from functools import reduce
-from json import dumps
 
 from server.models.Properties import Property, Price
 from server.util.instances import db
@@ -25,7 +20,7 @@ def prices (a):
 def avarage_rent(bed):
     areas = ['vi','ikoyi','wuse II', 'ph', 'lekki', 'maitama']
     allAverage = dict(ikoyi=[], vi=[])
-    years = get_years()
+    years = get_years()[-4:-1]
     
     for area in areas:
         yearAve = []
