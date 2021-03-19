@@ -20,7 +20,8 @@ def prices (a):
 def avarage_rent(bed):
     areas = ['vi','ikoyi','wuse II', 'ph', 'lekki', 'maitama']
     allAverage = dict(ikoyi=[], vi=[])
-    years = get_years()[-4:-1]
+    years = get_years()[-3:]
+    print(years)
     
     for area in areas:
         yearAve = []
