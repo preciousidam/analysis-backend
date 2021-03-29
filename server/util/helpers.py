@@ -6,6 +6,21 @@ import numpy as np
 from server.models.Properties import Property, Price
 from server.util.instances import db
 
+class AreaSet:
+    def __init__(self) -> None:
+        self.items = list()
+
+    def add(self, item):
+        contained = any(item['area'] == node['area'] for node in self.items)
+
+        if contained:
+            return
+
+        self.items.append(item)
+
+    def all(self):
+        return self.items
+
 
 def no_of_Beds():
     properties = Property.query.all()
@@ -19,12 +34,12 @@ def no_of_Beds():
 
 def get_areas():
     properties = Property.query.all()
-    dst = set()
+    dst = AreaSet()
 
     for prop in properties:
-        dst.add(prop.area)
+        dst.add(dict(area=prop.area, state=prop.state))
 
-    return list(dst)
+    return dst.all()
 
 def get_years():
     properties = Property.query.all()
