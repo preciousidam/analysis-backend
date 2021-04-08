@@ -15,7 +15,7 @@ class User(db.Model, Auth):
     name = db.Column(db.String(120), nullable=False)
     phone = db.Column(db.String(14), nullable=True)
     password = db.Column(db.String(255), nullable=False)
-    is_active = db.Column(db.Boolean())
+    is_active = db.Column(db.Boolean(), default=False)
     created_at = db.Column(db.DateTime(timezone=True), default=dt.now())
     updated_at = db.Column(db.DateTime(timezone=True), default=dt.now(), onupdate=dt.now())
 
@@ -37,6 +37,7 @@ class User(db.Model, Auth):
             'name': self.name,
             'email': self.email,
             'phone': self.phone,
+            'is_active': self.is_active,
             'created_at': self.created_at,
             'updated_at': self.updated_at,
         }

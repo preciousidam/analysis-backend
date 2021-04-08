@@ -58,10 +58,53 @@ def login():
     if user.checkPassword(password) is False:
         return {'status': 'error', 'msg': 'Invalid Password, please check details and try again'}, 401
 
+    if user.is_active is False:
+        return {'status': 'error', 'msg': 'This account is in-active, please contact support'}, 401
+
     expires = timedelta(days=7)
     access_token = create_access_token(identity=user.json(), expires_delta=expires)
     refresh_token = create_refresh_token(identity=user.json())
     return jsonify({'status': 'success', 'msg': 'Login Successful', 'token':access_token, 'refreshToken': refresh_token, 'user': user}), 200
+
+
+@authRoute.route('/register', methods=['POST'])
+def register():
+    
+    email = request.json.get('email', None)
+    password = request.json.get('password', None)
+    phone = request.json.get('phone', None)
+    username = request.json.get('username', None)
+    name = request.json.get('name', None)
+
+    if not email:
+        return {'status': 'error', 'msg': 'Email not provided'}, 400
+    
+    if not password:
+        return {'status': 'error', 'msg': 'Password not provided'}, 400
+
+    if not phone:
+        return {'status': 'error', 'msg': 'Email not provided'}, 400
+    
+    if not name:
+        return {'status': 'error', 'msg': 'Password not provided'}, 400
+
+    user = User.query.filter_by(email=email.lower()).first()
+
+    if user:
+        return {'status': 'error', 'msg': 'User with this email already exist. Please login'}, 400
+
+
+    user = User(phone=phone, name=name, email=email, username=username)
+    user.hashPassword(password=password)
+    db.session.add(user)
+    db.session.commit()
+
+    mail = NewUserMail(user.name, user.email)
+    mail.create_mail()
+    mail = SupportNewUserMail(user.name, user.email)
+    mail.create_mail()
+    
+    return jsonify({'status': 'success', 'msg': 'Account created successful'}), 200
 
 
 @authRoute.route('/request-password-reset', methods=['POST'])
@@ -150,7 +193,7 @@ class ResetMail():
         self.subject = "Password Reset"
         self.email = email
         self.token = token
-        self.body = f'Hi,\n You requested a password reset, please use the link below to reset your password\n https://napims.herokuapp.com/reset-password/{self.token} \n\n please ignore if you are not the one that initiated this.'
+        self.body = f'Hi,\n You requested a password reset, please use the link below to reset your password\n https://napims.cortts.com/reset-password/{self.token} \n\n please ignore if you are not the one that initiated this.'
 
     def create_mail(self):
         app = current_app._get_current_object()
@@ -172,7 +215,30 @@ class ResetSuccessfulMail():
     def __init__(self, email):
         self.subject = "Password Reset"
         self.email = email
-        self.body = f'Hi,\n Your password has been reset, click this link to login to your account.\n https://napims.herokuapp.com \n\n Thank you.'
+        self.body = f'Hi,\n Your password has been reset, click this link to login to your account.\n https://napims.cortts.com \n\n Thank you.'
+
+    def create_mail(self):
+        app = current_app._get_current_object()
+        
+        msg = Message(
+            subject=self.subject, 
+            recipients=[self.email],
+            body=self.body
+        )
+        thr = Thread(target=self.send_mail, args=[app,msg])
+        thr.start()
+
+        
+    def send_mail(self, app, msg):
+        with app.app_context():
+            mail.send(msg)
+
+
+class SupportNewUserMail():
+    def __init__(self, name, email):
+        self.subject = "New user account"
+        self.email = 'napims.support@cortts.com'
+        self.body = f'Hi Support,\n A new account was created, pending activation.\n Account Detail:\n\tEmail: {email}\n\tName: {name}\n\n Thank you.'
 
     def create_mail(self):
         app = current_app._get_current_object()
@@ -190,3 +256,25 @@ class ResetSuccessfulMail():
         with app.app_context():
             mail.send(msg)
     
+
+class NewUserMail():
+    def __init__(self, name, email):
+        self.subject = "New user account"
+        self.email = email
+        self.body = f'Hi {name},\n\n Your account is inactive at the moment and is being reviewed. You will get a mail once your account has been activated.\n\n Thank you.\nNAPIMS Team'
+
+    def create_mail(self):
+        app = current_app._get_current_object()
+        
+        msg = Message(
+            subject=self.subject, 
+            recipients=[self.email],
+            body=self.body
+        )
+        thr = Thread(target=self.send_mail, args=[app,msg])
+        thr.start()
+
+        
+    def send_mail(self, app, msg):
+        with app.app_context():
+            mail.send(msg)
