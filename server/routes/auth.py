@@ -238,7 +238,7 @@ class SupportNewUserMail():
     def __init__(self, name, email):
         self.subject = "New user account"
         self.email = 'napims.support@cortts.com'
-        self.body = f'Hi Support,\n A new account was created, pending activation.\n Account Detail:\n\tEmail: {email}\n\tName: {name}\n\n Thank you.'
+        self.body = f'Hi Support,\n A new account was created with details.\n\tEmail: {email}\n\tName: {name}\n\n\r Please confirm user identity in order to enable us authorize access.\n\n Thank you.'
 
     def create_mail(self):
         app = current_app._get_current_object()
@@ -261,7 +261,7 @@ class NewUserMail():
     def __init__(self, name, email):
         self.subject = "New user account"
         self.email = email
-        self.body = f'Hi {name},\n\n Your account is inactive at the moment and is being reviewed. You will get a mail once your account has been activated.\n\n Thank you.\nNAPIMS Team'
+        self.body = f'Hi {name},\n\n Thank you for creating an account. Your account will remain inactive while we verify your identity.\n\n You will get an email confirming your account activation once your identity has been confirmed.\n\n To contact us for further support, please send us an email via support.napims@cortts.com\n\n Best regards.\nNAPIMS Team'
 
     def create_mail(self):
         app = current_app._get_current_object()
