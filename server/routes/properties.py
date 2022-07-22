@@ -12,11 +12,11 @@ propertyRoute = Blueprint('properties', __name__, url_prefix='/api/properties')
 
 CORS(propertyRoute)
 
+
 @propertyRoute.before_request
 def create_db():
     db.create_all()
     db.session.commit()
-
 
 
 @propertyRoute.route('/', methods=['GET'])
@@ -24,42 +24,50 @@ def get_properties():
     properties = Property.query.order_by(Property.updated_at.desc()).all()
     return jsonify({'data': properties, 'msg': 'success'}), 200
 
+
 @propertyRoute.route('/search', methods=['GET'])
 def search_properties():
-    q = request.args.get('q','')
-    type = request.args.get('type','')
-    page= int(request.args.get('page', 1), base=10)
-    properties, total = findAll(q,type, page)
+    q = request.args.get('q', '')
+    type = request.args.get('type', '')
+    page = int(request.args.get('page', 1), base=10)
+    properties, total = findAll(q, type, page)
     return jsonify({'data': {'properties': properties, 'total': total}, 'msg': 'success'}), 200
+
 
 @propertyRoute.route('/<path:area>', methods=['GET'])
 def get_property_in_area(area):
-    page= int(request.args.get('page', 1))
+    page = int(request.args.get('page', 1))
 
     q = request.args.get('q').lower()
     bed = request.args.get('bed')
-    per_page=10
-   
-    properties = Property.query.filter(or_(Property.name.ilike(f'%{q}%'))).filter_by(area=area.lower())
+    prop_type = request.args.get('prop_type')
+    per_page = 10
+
+    properties = Property.query.filter(
+        or_(Property.name.ilike(f'%{q}%'))).filter_by(area=area.lower())
 
     if bed != '':
         properties = properties.filter_by(bedrooms=bed)
-    
+
+    if prop_type == 'commercial':
+        properties = properties.filter_by(is_commercial=True)
+    elif prop_type == 'non-commercial':
+        properties = properties.filter(
+            or_(Property.is_commercial == None, Property.is_commercial == False))
+
     propertyCount = properties.count()
-    properties = properties.order_by(Property.updated_at.desc()).paginate(page,per_page,error_out=False).items
+    properties = properties.order_by(Property.updated_at.desc()).paginate(
+        page, per_page, error_out=False).items
 
     return jsonify({'data': {'properties': properties, 'total': propertyCount}, 'msg': 'success'}), 200
 
 
+@propertyRoute.route('/<path:area>/<int:propertyId>', methods=['GET'])
+def get_property_by_id(area, propertyId):
 
-@propertyRoute.route('/<path:area>/<path:propName>', methods=['GET'])
-def get_property_by_id(area, propName):
-
-    property = Property.query.filter_by(area=area,name=propName.replace('-',' ')).first()
+    property = Property.query.filter_by(area=area, id=propertyId).first()
 
     return jsonify({'data': property, 'msg': 'success'}), 200
-
-
 
 
 @propertyRoute.route('/delete', methods=['POST'])
@@ -77,13 +85,10 @@ def delete_property():
     return jsonify({'data': properties, 'msg': 'success'}), 201
 
 
-
-
 @propertyRoute.route('/create', methods=['POST'])
 @jwt_required
 def get_create_property():
 
-    
     name = request.json.get('name', None)
     address = request.json.get('address', None)
     area = request.json.get('area', None)
@@ -98,7 +103,6 @@ def get_create_property():
     facilities = request.json.get('facilties', None)
     land_size = request.json.get('land_size', None)
 
-    
     if not name:
         return jsonify({'msg': 'Missing name', 'status': 'failed'}), 400
 
@@ -128,8 +132,6 @@ def get_create_property():
 
     if not floors:
         return jsonify({'msg': 'Missing floors', 'status': 'failed'}), 400
-
-
 
     property = Property(
         name=name,
@@ -162,12 +164,10 @@ def get_create_property():
     return jsonify({'msg': 'Property saved', 'status': 'success', 'data': property}), 201
 
 
-
 @propertyRoute.route('/edit', methods=['POST'])
 @jwt_required
 def get_edit_property():
 
-    
     id = request.json.get('id', None)
     name = request.json.get('name', None)
     address = request.json.get('address', None)
@@ -183,7 +183,6 @@ def get_edit_property():
     facilities = request.json.get('facilties', None)
     land_size = request.json.get('land_size', None)
 
-    
     if not id:
         return jsonify({'msg': 'Missing id', 'status': 'failed'}), 400
 
@@ -226,7 +225,6 @@ def get_edit_property():
     if not land_size:
         return jsonify({'msg': 'Missing land size', 'status': 'failed'}), 400
 
-
     property = Property(
         name=name,
         addresss=address,
@@ -256,5 +254,3 @@ def get_edit_property():
     db.session.refresh(property)
 
     return jsonify({'msg': 'Property saved', 'status': 'success', 'data': property}), 201
-
-

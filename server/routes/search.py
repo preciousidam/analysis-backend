@@ -17,10 +17,12 @@ CORS(searchRoute)
 @searchRoute.route('/search')
 def compare():
     keyword = request.args.get('keyword')
-    
+
     prop = Property.query.filter(or_(Property.area.ilike(f'%{keyword}%'),
-        Property.state.ilike(f'%{keyword}%'), Property.bedrooms.ilike(f'%{keyword}%'),
-        Property.facilities.ilike(f'%{keyword}%'),Property.name.ilike(f'%{keyword}%'),
-    )).order_by(func.random()).all()
-    
+                                     Property.state.ilike(
+                                         f'%{keyword}%'), Property.bedrooms.ilike(f'%{keyword}%'),
+                                     Property.facilities.ilike(
+                                         f'%{keyword}%'), Property.name.ilike(f'%{keyword}%'),
+                                     )).order_by(func.random()).all()
+
     return jsonify({'property': prop, 'msg': 'success'}), 200

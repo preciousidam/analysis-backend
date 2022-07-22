@@ -10,7 +10,6 @@ from server.util.instances import db
 from server.models.CloudinaryFileField import CLoudinaryFileUploadField
 
 
-
 def initializeLogin(app):
     login_manager = LoginManager()
     login_manager.init_app(app)
@@ -20,20 +19,26 @@ def initializeLogin(app):
     def load_user(user_id):
         return User.query.get(user_id)
 
+
 def initializeAdmin(admin):
-    admin.add_view(UserAdminView(User, db.session, name="Users", url="users",menu_icon_value="fa-users",menu_icon_type="fas"))
+    admin.add_view(UserAdminView(User, db.session, name="Users",
+                   url="users", menu_icon_value="fa-users", menu_icon_type="fas"))
     #admin.add_view(RoleAdminView(Role, db.session, category="Users", name="Roles", url="roles"))
     #admin.add_view(MyModelView(ResetToken, db.session, category="Users", name="Reset-tokens", url="reset-tokens"))
-    admin.add_view(PropertyAdmin(Property, db.session, name="Properties",menu_icon_value="fa-building",menu_icon_type="fas", url="properties"))
-    admin.add_view(ReportView(Report, db.session, name='Reports',menu_icon_value="fa-file-pdf",menu_icon_type="fas", url="reports"))
+    admin.add_view(PropertyAdmin(Property, db.session, name="Properties",
+                   menu_icon_value="fa-building", menu_icon_type="fas", url="properties"))
+    admin.add_view(ReportView(Report, db.session, name='Reports',
+                   menu_icon_value="fa-file-pdf", menu_icon_type="fas", url="reports"))
 
 
 class MyModelView(ModelView):
     create_template = 'admin/create.html'
     form_excluded_columns = ('created_at', 'updated_at')
+
     def is_accessible(self):
         if current_user and current_user.is_authenticated:
-            userRole = UserRole.query.filter_by(user_id=current_user.id).first().json()
+            userRole = UserRole.query.filter_by(
+                user_id=current_user.id).first().json()
             return current_user.is_authenticated and userRole.get('role') == 'admin'
 
         else:
@@ -45,13 +50,13 @@ class MyModelView(ModelView):
     def inaccessible_callback(self, name, **kwargs):
         return redirect(url_for('admin.login_view', next=request.url))
 
+
 class MyAdminIndexView(AdminIndexView):
     @expose('/')
     def index(self):
         if not current_user.is_authenticated:
             return redirect(url_for('.login_view'))
 
-        
         return super(MyAdminIndexView, self).index()
 
     @expose('/login/', methods=('GET', 'POST'))
@@ -80,7 +85,7 @@ class MyAdminIndexView(AdminIndexView):
             if user.checkPassword(password) is False:
                 flash('Invalid password')
                 return render_template('admin/login.html')
-            
+
             login_user(user)
             flash('Logged In successful')
             return redirect(next or url_for('.index'))
@@ -94,22 +99,25 @@ class MyAdminIndexView(AdminIndexView):
 
 
 class RoleAdminView(MyModelView):
-    form_choices = {'permissions': [(Permissions.READ, "Read"), (Permissions.WRITE, 'Write')]}
+    form_choices = {'permissions': [
+        (Permissions.READ, "Read"), (Permissions.WRITE, 'Write')]}
+
 
 class UserAdminView(MyModelView):
-    
+
     #form_args ={'is_active': dict(description='Check instead of deleting user to deactivate user')}
     column_auto_select_related = True
     column_hide_backrefs = False
-    column_exclude_list=('password', 'updated_at')
+    column_exclude_list = ('password', 'updated_at')
     inline_models = (UserRole,)
     column_labels = {'phone': 'Phone Number', 'is_active': 'Active'}
     column_sortable_list = ('name', 'email', 'username',)
-    column_searchable_list = ('name', 'email','username',)
-    column_default_sort = [('name',False), ('email',False)]
+    column_searchable_list = ('name', 'email', 'username',)
+    column_default_sort = [('name', False), ('email', False)]
     column_editable_list = ('name', 'username', 'email',)
     can_delete = False
-    form_columns = ('name', 'email', 'username', 'phone', 'password', 'is_active')
+    form_columns = ('name', 'email', 'username',
+                    'phone', 'password', 'is_active')
     form_widget_args = dict(
         name=dict(column_class='col-md-12'),
         email=dict(column_class='col-md-12'),
@@ -118,7 +126,7 @@ class UserAdminView(MyModelView):
         is_active=dict(column_class='col-md-6'),
         roles=dict(column_class='col-md-12'),
     )
-    
+
     def on_form_prefill(self, form, id):
         form.password.render_kw = {'readonly': True}
 
@@ -126,19 +134,25 @@ class UserAdminView(MyModelView):
         if is_created:
             model.password = generate_password_hash(model.password)
 
+
 class PropertyAdmin(MyModelView):
+    def render(self, template, **kwargs):
+        self.extra_js = [url_for('static', filename="js/extra.js")]
+        return super(PropertyAdmin, self).render(template, **kwargs)
+
     form_choices = {'area': [('ikoyi', 'Ikoyi'), ('vi', 'Victoria Island'), ('lekki', 'Lekki'), ('oniru', 'Oniru'), ('ph', 'Port Harcout'),
-                                ('maitama', 'Maitama'), ('asokoro', 'Asokoro'), ('wuse II', 'Wuse II'), 
-                                ('mabushi', 'Mabushi'), ('jabi', 'Jabi'), ('utako', 'Utako')],
+                             ('maitama', 'Maitama'), ('asokoro',
+                                                      'Asokoro'), ('wuse II', 'Wuse II'),
+                             ('mabushi', 'Mabushi'), ('jabi', 'Jabi'), ('utako', 'Utako')],
                     'state': [('abuja', 'Abuja'), ('lagos', 'Lagos'), ('port-harcourt', 'Port Harcout')],
-                    'bedrooms': [(1,'1 Bedroom'), (2, '2 Bedroom'), (3, '3 Bedroom'), (4, '4 Bedroom'), (5, '5 Bedroom'), (6, '6 Bedroom'), (7, '7 Bedroom')],
-                    'type': [('Flat','Flat'), ('pent house', 'Pent House'), ('terrace', 'Terrace'), ("duplex", 'Duplex'), ("maisonette", 'Maisonette')]
+                    'bedrooms': [(1, '1 Bedroom'), (2, '2 Bedroom'), (3, '3 Bedroom'), (4, '4 Bedroom'), (5, '5 Bedroom'), (6, '6 Bedroom'), (7, '7 Bedroom')],
+                    'type': [('Flat', 'Flat'), ('pent house', 'Pent House'), ('terrace', 'Terrace'), ("duplex", 'Duplex'), ("maisonette", 'Maisonette')]
                     }
-    
+
     column_auto_select_related = True
-    inline_models = [(Price,dict(
+    inline_models = [(Price, dict(
         form_columns=['id', 'year', 'amount'],
-        form_widget_args= {
+        form_widget_args={
             'year': {
                 'column_class': 'col-md-6'
             },
@@ -147,14 +161,19 @@ class PropertyAdmin(MyModelView):
             }
         }
     ))]
-    column_labels = {'built': 'Year built', 'serv_charge': 'Service charge'}
-    column_sortable_list = ('area', 'bedrooms', 'name', 'built',)
+    column_labels = {'built': 'Year built',
+                     'serv_charge': 'Service charge', 'updated_at': 'Last modified', 'is_commercial': 'Commercial use'}
+    column_sortable_list = ('area', 'bedrooms', 'name', 'built')
     column_searchable_list = ('name', 'area', 'address', 'type')
-    column_exclude_list=('created_at', 'updated_at', 'units', 'serv_charge', 'sale_price', 'facilities', 'floors', 'land_size')
-    column_default_sort = ('name',False)
+    column_exclude_list = ('created_at', 'units', 'serv_charge', 'commercial_type', 'size_in_sqm',
+                           'sale_price', 'facilities', 'floors', 'land_size', 'rent_per_sqm')
+    column_default_sort = ('name', False)
     can_export = True
-    column_editable_list = ('name', 'bedrooms', 'address', 'area', 'serv_charge', 'type', 'sale_price')
-    form_columns  = ('name', 'address', 'area', 'state', 'bedrooms','type', 'units', 'built', 'floors', 'land_size', 'sale_price', 'serv_charge', 'facilities')
+    column_editable_list = ('name', 'bedrooms', 'address',
+                            'area', 'serv_charge', 'type', 'sale_price')
+    form_columns = ('name', 'address', 'area', 'state', 'bedrooms', 'type', 'units',
+                    'built', 'floors', 'land_size', 'sale_price', 'serv_charge',
+                    'is_commercial', 'commercial_type', 'size_in_sqm', 'rent_per_sqm', 'facilities')
     form_widget_args = {
         'facilities': {
             'rows': 6,
@@ -198,16 +217,29 @@ class PropertyAdmin(MyModelView):
         },
         'rents': {
             'column_class': 'col-md-12'
+        },
+        'is_commercial': {
+            'column_class': 'col-md-3'
+        },
+        'commercial_type': {
+            'column_class': 'col-md-3'
+        },
+        'size_in_sqm': {
+            'column_class': 'col-md-3'
+        },
+        'rent_per_sqm': {
+            'column_class': 'col-md-3'
         }
     }
 
+
 class ReportView(MyModelView):
 
-    form_overrides = dict(file= CLoudinaryFileUploadField)
-    column_exclude_list= ('created_at', 'updated_at')
-    form_args = dict(file=dict( 
+    form_overrides = dict(file=CLoudinaryFileUploadField)
+    column_exclude_list = ('created_at', 'updated_at')
+    form_args = dict(file=dict(
         base_path='https://res.cloudinary.com/kblinsurance/raw/upload/v1608312210/',
-        ))
+    ))
 
     form_widget_args = dict(
         title=dict(column_class="col-md-12"),
