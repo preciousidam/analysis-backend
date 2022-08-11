@@ -10,6 +10,12 @@ class CommercialTypes(enum.Enum):
     purpose_built = 'Purpose Built'
 
 
+class PriceBy(enum.Enum):
+    building = 'Building'
+    sqm = 'SQM'
+    floor = 'Floor'
+
+
 class Property(db.Model, Auth):
     __tablename__ = 'properties'
     id = db.Column(db.Integer, primary_key=True, nullable=False)
@@ -31,7 +37,6 @@ class Property(db.Model, Auth):
     is_commercial = db.Column(db.Boolean)
     commercial_type = db.Column(db.Enum(CommercialTypes))
     size_in_sqm = db.Column(db.Integer)
-    rent_per_sqm = db.Column(db.Float)
     created_at = db.Column(db.DateTime(timezone=True), default=dt.now())
     updated_at = db.Column(db.DateTime(timezone=True),
                            default=dt.now(), onupdate=dt.now())
@@ -54,7 +59,6 @@ class Property(db.Model, Auth):
             'serv_charge': self.serv_charge,
             'sale_price': self.sale_price,
             'floors': self.floors,
-            'rent_per_sqm': self.rent_per_sqm,
             'is_commercial': self.is_commercial,
             'size_in_sqm': self.size_in_sqm,
             'commercial_type': self.commercial_type,
@@ -74,6 +78,7 @@ class Price(db.Model):
         'Property', backref=backref('Price', uselist=False),)
     year = db.Column(db.Integer, nullable=False)
     amount = db.Column(db.Float, nullable=False)
+    per = db.Column(db.Enum(PriceBy))
     created_at = db.Column(db.DateTime(timezone=True), default=dt.now())
     updated_at = db.Column(db.DateTime(timezone=True),
                            default=dt.now(), onupdate=dt.now())
@@ -120,4 +125,5 @@ class Price(db.Model):
         return {
             'year': self.year,
             'amount': self.amount,
+            'per': self.per
         }

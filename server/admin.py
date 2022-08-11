@@ -151,13 +151,16 @@ class PropertyAdmin(MyModelView):
 
     column_auto_select_related = True
     inline_models = [(Price, dict(
-        form_columns=['id', 'year', 'amount'],
+        form_columns=['id', 'year', 'amount', 'per'],
         form_widget_args={
             'year': {
-                'column_class': 'col-md-6'
+                'column_class': 'col-md-4'
             },
             'amount': {
-                'column_class': 'col-md-6'
+                'column_class': 'col-md-4'
+            },
+            'per': {
+                'column_class': 'col-md-4'
             }
         }
     ))]
@@ -166,14 +169,14 @@ class PropertyAdmin(MyModelView):
     column_sortable_list = ('area', 'bedrooms', 'name', 'built')
     column_searchable_list = ('name', 'area', 'address', 'type')
     column_exclude_list = ('created_at', 'units', 'serv_charge', 'commercial_type', 'size_in_sqm',
-                           'sale_price', 'facilities', 'floors', 'land_size', 'rent_per_sqm')
+                           'sale_price', 'facilities', 'floors', 'land_size')
     column_default_sort = ('name', False)
     can_export = True
     column_editable_list = ('name', 'bedrooms', 'address',
                             'area', 'serv_charge', 'type', 'sale_price')
     form_columns = ('name', 'address', 'area', 'state', 'bedrooms', 'type', 'units',
                     'built', 'floors', 'land_size', 'sale_price', 'serv_charge',
-                    'is_commercial', 'commercial_type', 'size_in_sqm', 'rent_per_sqm', 'facilities')
+                    'is_commercial', 'commercial_type', 'size_in_sqm', 'facilities')
     form_widget_args = {
         'facilities': {
             'rows': 6,
@@ -225,9 +228,6 @@ class PropertyAdmin(MyModelView):
             'column_class': 'col-md-3'
         },
         'size_in_sqm': {
-            'column_class': 'col-md-3'
-        },
-        'rent_per_sqm': {
             'column_class': 'col-md-3'
         }
     }
