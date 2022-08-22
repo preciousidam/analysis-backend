@@ -146,7 +146,7 @@ class PropertyAdmin(MyModelView):
                              ('mabushi', 'Mabushi'), ('jabi', 'Jabi'), ('utako', 'Utako')],
                     'state': [('abuja', 'Abuja'), ('lagos', 'Lagos'), ('port-harcourt', 'Port Harcout')],
                     'bedrooms': [(1, '1 Bedroom'), (2, '2 Bedroom'), (3, '3 Bedroom'), (4, '4 Bedroom'), (5, '5 Bedroom'), (6, '6 Bedroom'), (7, '7 Bedroom')],
-                    'type': [('Flat', 'Flat'), ('pent house', 'Pent House'), ('terrace', 'Terrace'), ("duplex", 'Duplex'), ("maisonette", 'Maisonette'), ("detached", 'Detached'), ("semi-detached", 'Semi detached')]
+                    'type': [('Flat', 'Flat'), ('pent house', 'Pent House'), ('terrace', 'Terrace'), ("duplex", 'Duplex'), ("maisonette", 'Maisonette'), ("detached", 'Detached'), ("semi-detached", 'Semi detached'), ("bungalow", 'Bungalow')]
                     }
 
     column_auto_select_related = True
