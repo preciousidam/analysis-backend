@@ -24,7 +24,7 @@ class Property(db.Model, Auth):
     address = db.Column(db.String(255), nullable=False)
     area = db.Column(db.String(255), nullable=False)
     state = db.Column(db.String(255), nullable=False)
-    bedrooms = db.Column(db.Integer, nullable=False)
+    bedrooms = db.Column(db.Integer, nullable=True)
     built = db.Column(db.Integer, nullable=True)
     units = db.Column(db.Integer, nullable=False)
     rents = db.relationship('Price', cascade='all, delete, delete-orphan',
