@@ -26,7 +26,7 @@ class Property(db.Model, Auth):
     state = db.Column(db.String(255), nullable=False)
     bedrooms = db.Column(db.Integer, nullable=True)
     built = db.Column(db.Integer, nullable=True)
-    units = db.Column(db.Integer, nullable=False)
+    units = db.Column(db.Integer, nullable=True)
     rents = db.relationship('Price', cascade='all, delete, delete-orphan',
                             backref='properties', lazy=False, passive_deletes=True, order_by='Price.year')
     serv_charge = db.Column(db.Float)
