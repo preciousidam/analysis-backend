@@ -8,6 +8,7 @@ from server.models.Properties import Property, Price
 from server.models.Report import Report
 from server.util.instances import db
 from server.models.CloudinaryFileField import CLoudinaryFileUploadField
+from server.areas import areas
 
 
 def initializeLogin(app):
@@ -140,10 +141,7 @@ class PropertyAdmin(MyModelView):
         self.extra_js = [url_for('static', filename="js/extra.js")]
         return super(PropertyAdmin, self).render(template, **kwargs)
 
-    form_choices = {'area': [('ikoyi', 'Ikoyi'), ('vi', 'Victoria Island'), ('lekki', 'Lekki'), ('oniru', 'Oniru'), ('ph', 'Port Harcout'),
-                             ('maitama', 'Maitama'), ('asokoro',
-                                                      'Asokoro'), ('wuse II', 'Wuse II'),
-                             ('mabushi', 'Mabushi'), ('jabi', 'Jabi'), ('utako', 'Utako')],
+    form_choices = {'area': areas,
                     'state': [('abuja', 'Abuja'), ('lagos', 'Lagos'), ('port-harcourt', 'Port Harcout')],
                     'bedrooms': [(1, '1 Bedroom'), (2, '2 Bedroom'), (3, '3 Bedroom'), (4, '4 Bedroom'), (5, '5 Bedroom'), (6, '6 Bedroom'), (7, '7 Bedroom'), (8, '8 Bedroom'), (9, '9 Bedroom'), (10, '10 Bedroom')],
                     'type': [('Flat', 'Flat'), ('pent house', 'Pent House'), ('terrace', 'Terrace'), ("duplex", 'Duplex'), ("maisonette", 'Maisonette'), ("detached", 'Detached'), ("semi-detached", 'Semi detached'), ("bungalow", 'Bungalow')]
