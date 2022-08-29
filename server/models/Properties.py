@@ -37,6 +37,7 @@ class Property(db.Model, Auth):
     is_commercial = db.Column(db.Boolean)
     commercial_type = db.Column(db.Enum(CommercialTypes))
     size_in_sqm = db.Column(db.Integer)
+    note = db.Column(db.Text)
     created_at = db.Column(db.DateTime(timezone=True), default=dt.now())
     updated_at = db.Column(db.DateTime(timezone=True),
                            default=dt.now(), onupdate=dt.now())
@@ -64,6 +65,7 @@ class Property(db.Model, Auth):
             'commercial_type': self.commercial_type,
             'facilities': self.facilities,
             'land_size': self.land_size,
+            'note': self.note,
             'created_at': self.created_at,
             'updated_at': self.updated_at,
         }

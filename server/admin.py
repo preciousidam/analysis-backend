@@ -176,11 +176,15 @@ class PropertyAdmin(MyModelView):
                             'area', 'serv_charge', 'type', 'sale_price')
     form_columns = ('name', 'address', 'area', 'state', 'bedrooms', 'type', 'units',
                     'built', 'floors', 'land_size', 'sale_price', 'serv_charge',
-                    'is_commercial', 'commercial_type', 'size_in_sqm', 'facilities')
+                    'is_commercial', 'commercial_type', 'size_in_sqm', 'facilities', 'note')
     form_widget_args = {
         'facilities': {
             'rows': 6,
-            'column_class': 'col-md-12'
+            'column_class': 'col-md-6'
+        },
+        'note': {
+            'rows': 6,
+            'column_class': 'col-md-6'
         },
         'name': {
             'column_class': 'col-md-12'
